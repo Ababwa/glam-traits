@@ -23,15 +23,6 @@ For lengths "any", 2, 3 and 4:
 
 As well as for concrete types of any length:
 
-|          |
-| -------- |
-| `I16Vec` |
-| `U16Vec` |
-| `I32Vec` |
-| `U32Vec` |
-| `I64Vec` |
-| `U64Vec` |
-| `F32Vec` |
-| `F64Vec` |
+`I16Vec`, `U16Vec`, `I32Vec`, `U32Vec`, `I64Vec`, `U64Vec`, `F32Vec`, `F64Vec`
 
 Traits are implemented for the appropriate glam types.
