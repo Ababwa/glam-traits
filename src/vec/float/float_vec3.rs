@@ -119,8 +119,6 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> Self::Scalar;
 	fn max_element(self) -> Self::Scalar;
-	fn element_sum(self) -> Self::Scalar;
-	fn element_product(self) -> Self::Scalar;
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self;
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type;
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type;
@@ -158,7 +156,6 @@ where
 	fn powf(self, n: Self::Scalar) -> Self;
 	fn recip(self) -> Self;
 	fn lerp(self, rhs: Self, s: Self::Scalar) -> Self;
-	fn midpoint(self, rhs: Self) -> Self;
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool;
 	fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self;
 	fn clamp_length_max(self, max: Self::Scalar) -> Self;
@@ -207,8 +204,6 @@ impl FloatVec3 for glam::Vec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -246,7 +241,6 @@ impl FloatVec3 for glam::Vec3 {
 	fn powf(self, n: Self::Scalar) -> Self { self.powf(n) }
 	fn recip(self) -> Self { self.recip() }
 	fn lerp(self, rhs: Self, s: Self::Scalar) -> Self { self.lerp(rhs, s) }
-	fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 	fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self { self.clamp_length(min, max) }
 	fn clamp_length_max(self, max: Self::Scalar) -> Self { self.clamp_length_max(max) }
@@ -295,8 +289,6 @@ impl FloatVec3 for glam::Vec3A {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -334,7 +326,6 @@ impl FloatVec3 for glam::Vec3A {
 	fn powf(self, n: Self::Scalar) -> Self { self.powf(n) }
 	fn recip(self) -> Self { self.recip() }
 	fn lerp(self, rhs: Self, s: Self::Scalar) -> Self { self.lerp(rhs, s) }
-	fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 	fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self { self.clamp_length(min, max) }
 	fn clamp_length_max(self, max: Self::Scalar) -> Self { self.clamp_length_max(max) }
@@ -383,8 +374,6 @@ impl FloatVec3 for glam::DVec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -422,7 +411,6 @@ impl FloatVec3 for glam::DVec3 {
 	fn powf(self, n: Self::Scalar) -> Self { self.powf(n) }
 	fn recip(self) -> Self { self.recip() }
 	fn lerp(self, rhs: Self, s: Self::Scalar) -> Self { self.lerp(rhs, s) }
-	fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 	fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self { self.clamp_length(min, max) }
 	fn clamp_length_max(self, max: Self::Scalar) -> Self { self.clamp_length_max(max) }

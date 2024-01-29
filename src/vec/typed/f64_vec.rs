@@ -78,8 +78,6 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> f64;
 	fn max_element(self) -> f64;
-	fn element_sum(self) -> f64;
-	fn element_product(self) -> f64;
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self;
 	fn cmpeq(self, rhs: Self) -> Self::BVecType;
 	fn cmpne(self, rhs: Self) -> Self::BVecType;
@@ -117,7 +115,6 @@ where
 	fn powf(self, n: f64) -> Self;
 	fn recip(self) -> Self;
 	fn lerp(self, rhs: Self, s: f64) -> Self;
-	fn midpoint(self, rhs: Self) -> Self;
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: f64) -> bool;
 	fn clamp_length(self, min: f64, max: f64) -> Self;
 	fn clamp_length_max(self, max: f64) -> Self;
@@ -146,8 +143,6 @@ impl F64Vec for glam::DVec2 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> f64 { self.min_element() }
 	fn max_element(self) -> f64 { self.max_element() }
-	fn element_sum(self) -> f64 { self.element_sum() }
-	fn element_product(self) -> f64 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
@@ -185,7 +180,6 @@ impl F64Vec for glam::DVec2 {
 	fn powf(self, n: f64) -> Self { self.powf(n) }
 	fn recip(self) -> Self { self.recip() }
 	fn lerp(self, rhs: Self, s: f64) -> Self { self.lerp(rhs, s) }
-	fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: f64) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 	fn clamp_length(self, min: f64, max: f64) -> Self { self.clamp_length(min, max) }
 	fn clamp_length_max(self, max: f64) -> Self { self.clamp_length_max(max) }
@@ -214,8 +208,6 @@ impl F64Vec for glam::DVec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> f64 { self.min_element() }
 	fn max_element(self) -> f64 { self.max_element() }
-	fn element_sum(self) -> f64 { self.element_sum() }
-	fn element_product(self) -> f64 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
@@ -253,7 +245,6 @@ impl F64Vec for glam::DVec3 {
 	fn powf(self, n: f64) -> Self { self.powf(n) }
 	fn recip(self) -> Self { self.recip() }
 	fn lerp(self, rhs: Self, s: f64) -> Self { self.lerp(rhs, s) }
-	fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: f64) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 	fn clamp_length(self, min: f64, max: f64) -> Self { self.clamp_length(min, max) }
 	fn clamp_length_max(self, max: f64) -> Self { self.clamp_length_max(max) }
@@ -282,8 +273,6 @@ impl F64Vec for glam::DVec4 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> f64 { self.min_element() }
 	fn max_element(self) -> f64 { self.max_element() }
-	fn element_sum(self) -> f64 { self.element_sum() }
-	fn element_product(self) -> f64 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
@@ -321,7 +310,6 @@ impl F64Vec for glam::DVec4 {
 	fn powf(self, n: f64) -> Self { self.powf(n) }
 	fn recip(self) -> Self { self.recip() }
 	fn lerp(self, rhs: Self, s: f64) -> Self { self.lerp(rhs, s) }
-	fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: f64) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 	fn clamp_length(self, min: f64, max: f64) -> Self { self.clamp_length(min, max) }
 	fn clamp_length_max(self, max: f64) -> Self { self.clamp_length_max(max) }

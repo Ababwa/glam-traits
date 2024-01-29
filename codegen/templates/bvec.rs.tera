@@ -30,7 +30,6 @@ where
 		Debug +
 		Display +
 		{%- if dim %}
-		From<[bool; {{ dim }}]> +
 		Into<[bool; {{ dim }}]> +
 		Into<[u32; {{ dim }}]> +
 		{%- endif %}
@@ -49,6 +48,5 @@ where
 	fn set(&mut self, index: usize, value: bool);
 	{%- if dim %}
 	fn new({% for c in components %}{{ c }}: bool{% if not loop.last %}, {% endif %}{% endfor %}) -> Self;
-	fn from_array(a: [bool; {{ dim }}]) -> Self;
 	{%- endif %}
 }

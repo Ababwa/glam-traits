@@ -18,6 +18,5 @@ impl {{ name }} for glam::{{ impl_t }} {
 	fn set(&mut self, index: usize, value: bool) { self.set(index, value) }
 	{%- if dim %}
 	fn new({% for c in components %}{{ c }}: bool{% if not loop.last %}, {% endif %}{% endfor %}) -> Self { Self::new({% for c in components %}{{ c }}{% if not loop.last %}, {% endif %}{% endfor %}) }
-	fn from_array(a: [bool; {{ dim }}]) -> Self { Self::from_array(a) }
 	{%- endif %}
 }

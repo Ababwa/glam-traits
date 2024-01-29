@@ -114,8 +114,6 @@ impl {{ name }} for glam::{{ impl_t }} {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> {{ scalar_t }} { self.min_element() }
 	fn max_element(self) -> {{ scalar_t }} { self.max_element() }
-	fn element_sum(self) -> {{ scalar_t }} { self.element_sum() }
-	fn element_product(self) -> {{ scalar_t }} { self.element_product() }
 	fn select(mask: {{ bvec_t }}, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> {{ bvec_t }} { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> {{ bvec_t }} { self.cmpne(rhs) }
@@ -156,7 +154,6 @@ impl {{ name }} for glam::{{ impl_t }} {
 	fn powf(self, n: {{ scalar_t }}) -> Self { self.powf(n) }
 	fn recip(self) -> Self { self.recip() }
 	fn lerp(self, rhs: Self, s: {{ scalar_t }}) -> Self { self.lerp(rhs, s) }
-	fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: {{ scalar_t }}) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 	fn clamp_length(self, min: {{ scalar_t }}, max: {{ scalar_t }}) -> Self { self.clamp_length(min, max) }
 	fn clamp_length_max(self, max: {{ scalar_t }}) -> Self { self.clamp_length_max(max) }

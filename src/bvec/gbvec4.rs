@@ -22,7 +22,6 @@ where
 		Not +
 		Debug +
 		Display +
-		From<[bool; 4]> +
 		Into<[bool; 4]> +
 		Into<[u32; 4]> +
 	,
@@ -36,7 +35,6 @@ where
 	fn test(&self, index: usize) -> bool;
 	fn set(&mut self, index: usize, value: bool);
 	fn new(x: bool, y: bool, z: bool, w: bool) -> Self;
-	fn from_array(a: [bool; 4]) -> Self;
 }
 
 impl GBVec4 for glam::BVec4 {
@@ -49,7 +47,6 @@ impl GBVec4 for glam::BVec4 {
 	fn test(&self, index: usize) -> bool { self.test(index) }
 	fn set(&mut self, index: usize, value: bool) { self.set(index, value) }
 	fn new(x: bool, y: bool, z: bool, w: bool) -> Self { Self::new(x, y, z, w) }
-	fn from_array(a: [bool; 4]) -> Self { Self::from_array(a) }
 }
 
 impl GBVec4 for glam::BVec4A {
@@ -62,5 +59,4 @@ impl GBVec4 for glam::BVec4A {
 	fn test(&self, index: usize) -> bool { self.test(index) }
 	fn set(&mut self, index: usize, value: bool) { self.set(index, value) }
 	fn new(x: bool, y: bool, z: bool, w: bool) -> Self { Self::new(x, y, z, w) }
-	fn from_array(a: [bool; 4]) -> Self { Self::from_array(a) }
 }

@@ -90,8 +90,6 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> u32;
 	fn max_element(self) -> u32;
-	fn element_sum(self) -> u32;
-	fn element_product(self) -> u32;
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self;
 	fn cmpeq(self, rhs: Self) -> Self::BVecType;
 	fn cmpne(self, rhs: Self) -> Self::BVecType;
@@ -127,8 +125,6 @@ impl U32Vec for glam::UVec2 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> u32 { self.min_element() }
 	fn max_element(self) -> u32 { self.max_element() }
-	fn element_sum(self) -> u32 { self.element_sum() }
-	fn element_product(self) -> u32 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
@@ -164,8 +160,6 @@ impl U32Vec for glam::UVec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> u32 { self.min_element() }
 	fn max_element(self) -> u32 { self.max_element() }
-	fn element_sum(self) -> u32 { self.element_sum() }
-	fn element_product(self) -> u32 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
@@ -201,8 +195,6 @@ impl U32Vec for glam::UVec4 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> u32 { self.min_element() }
 	fn max_element(self) -> u32 { self.max_element() }
-	fn element_sum(self) -> u32 { self.element_sum() }
-	fn element_product(self) -> u32 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }

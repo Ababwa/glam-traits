@@ -106,8 +106,6 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> Self::Scalar;
 	fn max_element(self) -> Self::Scalar;
-	fn element_sum(self) -> Self::Scalar;
-	fn element_product(self) -> Self::Scalar;
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self;
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type;
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type;
@@ -147,8 +145,6 @@ impl GVec3 for glam::I16Vec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -188,8 +184,6 @@ impl GVec3 for glam::U16Vec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -229,8 +223,6 @@ impl GVec3 for glam::IVec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -270,8 +262,6 @@ impl GVec3 for glam::UVec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -311,8 +301,6 @@ impl GVec3 for glam::I64Vec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -352,8 +340,6 @@ impl GVec3 for glam::U64Vec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -393,8 +379,6 @@ impl GVec3 for glam::Vec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -434,8 +418,6 @@ impl GVec3 for glam::Vec3A {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
@@ -475,8 +457,6 @@ impl GVec3 for glam::DVec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }

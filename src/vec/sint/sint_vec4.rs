@@ -130,8 +130,6 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> Self::Scalar;
 	fn max_element(self) -> Self::Scalar;
-	fn element_sum(self) -> Self::Scalar;
-	fn element_product(self) -> Self::Scalar;
 	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self;
 	fn cmpeq(self, rhs: Self) -> glam::BVec4;
 	fn cmpne(self, rhs: Self) -> glam::BVec4;
@@ -187,8 +185,6 @@ impl SIntVec4 for glam::I16Vec4 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> glam::BVec4 { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> glam::BVec4 { self.cmpne(rhs) }
@@ -244,8 +240,6 @@ impl SIntVec4 for glam::IVec4 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> glam::BVec4 { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> glam::BVec4 { self.cmpne(rhs) }
@@ -301,8 +295,6 @@ impl SIntVec4 for glam::I64Vec4 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> Self::Scalar { self.min_element() }
 	fn max_element(self) -> Self::Scalar { self.max_element() }
-	fn element_sum(self) -> Self::Scalar { self.element_sum() }
-	fn element_product(self) -> Self::Scalar { self.element_product() }
 	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> glam::BVec4 { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> glam::BVec4 { self.cmpne(rhs) }

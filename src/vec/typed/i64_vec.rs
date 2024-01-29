@@ -93,8 +93,6 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> i64;
 	fn max_element(self) -> i64;
-	fn element_sum(self) -> i64;
-	fn element_product(self) -> i64;
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self;
 	fn cmpeq(self, rhs: Self) -> Self::BVecType;
 	fn cmpne(self, rhs: Self) -> Self::BVecType;
@@ -137,8 +135,6 @@ impl I64Vec for glam::I64Vec2 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> i64 { self.min_element() }
 	fn max_element(self) -> i64 { self.max_element() }
-	fn element_sum(self) -> i64 { self.element_sum() }
-	fn element_product(self) -> i64 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
@@ -181,8 +177,6 @@ impl I64Vec for glam::I64Vec3 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> i64 { self.min_element() }
 	fn max_element(self) -> i64 { self.max_element() }
-	fn element_sum(self) -> i64 { self.element_sum() }
-	fn element_product(self) -> i64 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
@@ -225,8 +219,6 @@ impl I64Vec for glam::I64Vec4 {
 	fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 	fn min_element(self) -> i64 { self.min_element() }
 	fn max_element(self) -> i64 { self.max_element() }
-	fn element_sum(self) -> i64 { self.element_sum() }
-	fn element_product(self) -> i64 { self.element_product() }
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 	fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 	fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }

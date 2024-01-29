@@ -5,5 +5,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-glam = { git = "https://github.com/Ababwa/glam-rs.git" }
+glam = "0.25.0"
 num-traits = "0.2.17"
