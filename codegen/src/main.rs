@@ -48,22 +48,19 @@ fn main() -> Result<()> {
 			("uint", false, false, true, true, &[u16v, u32v, u64v]),
 		] {
 			let mut context = Context::new();
-			for (key, val) in [
-				("is_signed", is_signed),
-				("is_float", is_float),
-				("is_int", is_int),
-				("is_unsigned", is_unsigned),
-			] {
-				context.insert(key, &val);
-			}
-			let d = match dim {
+			let (dim_str, bvec_trait) = match dim {
 				Some(dim) => {
 					context.insert("dim", &dim);
-					dim.to_string()
+					(dim.to_string(), dim != 2 && !is_int)
 				},
-				None => "".to_string(),
+				None => ("".to_string(), true),
 			};
-			let name = format!("src/vec/{}/{}_vec{}.rs", name, name, d);
+			context.insert("bvec_trait", &bvec_trait);
+			context.insert("is_signed", &is_signed);
+			context.insert("is_float", &is_float);
+			context.insert("is_int", &is_int);
+			context.insert("is_unsigned", &is_unsigned);
+			let name = format!("src/vec/{}/{}_vec{}.rs", name, name, dim_str);
 			let file = File::create(&name).unwrap();
 			tera.render_to("vec.rs.tera", &context, &file)?;
 			for &(prefix, scalar) in impls {

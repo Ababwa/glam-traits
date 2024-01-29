@@ -30,7 +30,6 @@ use num_traits::{
 	PrimInt,
 	Signed,
 };
-use crate::GBVec4;
 use crate::SIntVec3;
 
 pub trait SIntVec4
@@ -103,11 +102,9 @@ where
 		PrimInt +
 		Signed +
 	,
-	Self::BVec4Type: GBVec4,
 	Self::SIntVec3Type: SIntVec3<Scalar = Self::Scalar>,
 {
 	type Scalar;
-	type BVec4Type;
 	type SIntVec3Type;
 	const ZERO: Self;
 	const ONE: Self;
@@ -135,13 +132,13 @@ where
 	fn max_element(self) -> Self::Scalar;
 	fn element_sum(self) -> Self::Scalar;
 	fn element_product(self) -> Self::Scalar;
-	fn select(mask: Self::BVec4Type, if_true: Self, if_false: Self) -> Self;
-	fn cmpeq(self, rhs: Self) -> Self::BVec4Type;
-	fn cmpne(self, rhs: Self) -> Self::BVec4Type;
-	fn cmpge(self, rhs: Self) -> Self::BVec4Type;
-	fn cmpgt(self, rhs: Self) -> Self::BVec4Type;
-	fn cmple(self, rhs: Self) -> Self::BVec4Type;
-	fn cmplt(self, rhs: Self) -> Self::BVec4Type;
+	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self;
+	fn cmpeq(self, rhs: Self) -> glam::BVec4;
+	fn cmpne(self, rhs: Self) -> glam::BVec4;
+	fn cmpge(self, rhs: Self) -> glam::BVec4;
+	fn cmpgt(self, rhs: Self) -> glam::BVec4;
+	fn cmple(self, rhs: Self) -> glam::BVec4;
+	fn cmplt(self, rhs: Self) -> glam::BVec4;
 	fn length_squared(self) -> Self::Scalar;
 	fn abs(self) -> Self;
 	fn signum(self) -> Self;
@@ -165,7 +162,6 @@ where
 
 impl SIntVec4 for glam::I16Vec4 {
 	type Scalar = i16;
-	type BVec4Type = glam::BVec4;
 	type SIntVec3Type = glam::I16Vec3;
 	const ZERO: Self = Self::ZERO;
 	const ONE: Self = Self::ONE;
@@ -193,13 +189,13 @@ impl SIntVec4 for glam::I16Vec4 {
 	fn max_element(self) -> Self::Scalar { self.max_element() }
 	fn element_sum(self) -> Self::Scalar { self.element_sum() }
 	fn element_product(self) -> Self::Scalar { self.element_product() }
-	fn select(mask: Self::BVec4Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
-	fn cmpeq(self, rhs: Self) -> Self::BVec4Type { self.cmpeq(rhs) }
-	fn cmpne(self, rhs: Self) -> Self::BVec4Type { self.cmpne(rhs) }
-	fn cmpge(self, rhs: Self) -> Self::BVec4Type { self.cmpge(rhs) }
-	fn cmpgt(self, rhs: Self) -> Self::BVec4Type { self.cmpgt(rhs) }
-	fn cmple(self, rhs: Self) -> Self::BVec4Type { self.cmple(rhs) }
-	fn cmplt(self, rhs: Self) -> Self::BVec4Type { self.cmplt(rhs) }
+	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
+	fn cmpeq(self, rhs: Self) -> glam::BVec4 { self.cmpeq(rhs) }
+	fn cmpne(self, rhs: Self) -> glam::BVec4 { self.cmpne(rhs) }
+	fn cmpge(self, rhs: Self) -> glam::BVec4 { self.cmpge(rhs) }
+	fn cmpgt(self, rhs: Self) -> glam::BVec4 { self.cmpgt(rhs) }
+	fn cmple(self, rhs: Self) -> glam::BVec4 { self.cmple(rhs) }
+	fn cmplt(self, rhs: Self) -> glam::BVec4 { self.cmplt(rhs) }
 	fn length_squared(self) -> Self::Scalar { self.length_squared() }
 	fn abs(self) -> Self { self.abs() }
 	fn signum(self) -> Self { self.signum() }
@@ -223,7 +219,6 @@ impl SIntVec4 for glam::I16Vec4 {
 
 impl SIntVec4 for glam::IVec4 {
 	type Scalar = i32;
-	type BVec4Type = glam::BVec4;
 	type SIntVec3Type = glam::IVec3;
 	const ZERO: Self = Self::ZERO;
 	const ONE: Self = Self::ONE;
@@ -251,13 +246,13 @@ impl SIntVec4 for glam::IVec4 {
 	fn max_element(self) -> Self::Scalar { self.max_element() }
 	fn element_sum(self) -> Self::Scalar { self.element_sum() }
 	fn element_product(self) -> Self::Scalar { self.element_product() }
-	fn select(mask: Self::BVec4Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
-	fn cmpeq(self, rhs: Self) -> Self::BVec4Type { self.cmpeq(rhs) }
-	fn cmpne(self, rhs: Self) -> Self::BVec4Type { self.cmpne(rhs) }
-	fn cmpge(self, rhs: Self) -> Self::BVec4Type { self.cmpge(rhs) }
-	fn cmpgt(self, rhs: Self) -> Self::BVec4Type { self.cmpgt(rhs) }
-	fn cmple(self, rhs: Self) -> Self::BVec4Type { self.cmple(rhs) }
-	fn cmplt(self, rhs: Self) -> Self::BVec4Type { self.cmplt(rhs) }
+	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
+	fn cmpeq(self, rhs: Self) -> glam::BVec4 { self.cmpeq(rhs) }
+	fn cmpne(self, rhs: Self) -> glam::BVec4 { self.cmpne(rhs) }
+	fn cmpge(self, rhs: Self) -> glam::BVec4 { self.cmpge(rhs) }
+	fn cmpgt(self, rhs: Self) -> glam::BVec4 { self.cmpgt(rhs) }
+	fn cmple(self, rhs: Self) -> glam::BVec4 { self.cmple(rhs) }
+	fn cmplt(self, rhs: Self) -> glam::BVec4 { self.cmplt(rhs) }
 	fn length_squared(self) -> Self::Scalar { self.length_squared() }
 	fn abs(self) -> Self { self.abs() }
 	fn signum(self) -> Self { self.signum() }
@@ -281,7 +276,6 @@ impl SIntVec4 for glam::IVec4 {
 
 impl SIntVec4 for glam::I64Vec4 {
 	type Scalar = i64;
-	type BVec4Type = glam::BVec4;
 	type SIntVec3Type = glam::I64Vec3;
 	const ZERO: Self = Self::ZERO;
 	const ONE: Self = Self::ONE;
@@ -309,13 +303,13 @@ impl SIntVec4 for glam::I64Vec4 {
 	fn max_element(self) -> Self::Scalar { self.max_element() }
 	fn element_sum(self) -> Self::Scalar { self.element_sum() }
 	fn element_product(self) -> Self::Scalar { self.element_product() }
-	fn select(mask: Self::BVec4Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
-	fn cmpeq(self, rhs: Self) -> Self::BVec4Type { self.cmpeq(rhs) }
-	fn cmpne(self, rhs: Self) -> Self::BVec4Type { self.cmpne(rhs) }
-	fn cmpge(self, rhs: Self) -> Self::BVec4Type { self.cmpge(rhs) }
-	fn cmpgt(self, rhs: Self) -> Self::BVec4Type { self.cmpgt(rhs) }
-	fn cmple(self, rhs: Self) -> Self::BVec4Type { self.cmple(rhs) }
-	fn cmplt(self, rhs: Self) -> Self::BVec4Type { self.cmplt(rhs) }
+	fn select(mask: glam::BVec4, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
+	fn cmpeq(self, rhs: Self) -> glam::BVec4 { self.cmpeq(rhs) }
+	fn cmpne(self, rhs: Self) -> glam::BVec4 { self.cmpne(rhs) }
+	fn cmpge(self, rhs: Self) -> glam::BVec4 { self.cmpge(rhs) }
+	fn cmpgt(self, rhs: Self) -> glam::BVec4 { self.cmpgt(rhs) }
+	fn cmple(self, rhs: Self) -> glam::BVec4 { self.cmple(rhs) }
+	fn cmplt(self, rhs: Self) -> glam::BVec4 { self.cmplt(rhs) }
 	fn length_squared(self) -> Self::Scalar { self.length_squared() }
 	fn abs(self) -> Self { self.abs() }
 	fn signum(self) -> Self { self.signum() }

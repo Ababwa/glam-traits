@@ -29,7 +29,6 @@ use num_traits::{
 	PrimInt,
 	Unsigned,
 };
-use crate::GBVec3;
 use crate::UIntVec2;
 use crate::UIntVec4;
 
@@ -102,12 +101,10 @@ where
 		PrimInt +
 		Unsigned +
 	,
-	Self::BVec3Type: GBVec3,
 	Self::UIntVec2Type: UIntVec2<Scalar = Self::Scalar>,
 	Self::UIntVec4Type: UIntVec4<Scalar = Self::Scalar>,
 {
 	type Scalar;
-	type BVec3Type;
 	type UIntVec2Type;
 	type UIntVec4Type;
 	const ZERO: Self;
@@ -130,13 +127,13 @@ where
 	fn max_element(self) -> Self::Scalar;
 	fn element_sum(self) -> Self::Scalar;
 	fn element_product(self) -> Self::Scalar;
-	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self;
-	fn cmpeq(self, rhs: Self) -> Self::BVec3Type;
-	fn cmpne(self, rhs: Self) -> Self::BVec3Type;
-	fn cmpge(self, rhs: Self) -> Self::BVec3Type;
-	fn cmpgt(self, rhs: Self) -> Self::BVec3Type;
-	fn cmple(self, rhs: Self) -> Self::BVec3Type;
-	fn cmplt(self, rhs: Self) -> Self::BVec3Type;
+	fn select(mask: glam::BVec3, if_true: Self, if_false: Self) -> Self;
+	fn cmpeq(self, rhs: Self) -> glam::BVec3;
+	fn cmpne(self, rhs: Self) -> glam::BVec3;
+	fn cmpge(self, rhs: Self) -> glam::BVec3;
+	fn cmpgt(self, rhs: Self) -> glam::BVec3;
+	fn cmple(self, rhs: Self) -> glam::BVec3;
+	fn cmplt(self, rhs: Self) -> glam::BVec3;
 	fn length_squared(self) -> Self::Scalar;
 	fn wrapping_add(self, rhs: Self) -> Self;
 	fn wrapping_sub(self, rhs: Self) -> Self;
@@ -156,7 +153,6 @@ where
 
 impl UIntVec3 for glam::U16Vec3 {
 	type Scalar = u16;
-	type BVec3Type = glam::BVec3;
 	type UIntVec2Type = glam::U16Vec2;
 	type UIntVec4Type = glam::U16Vec4;
 	const ZERO: Self = Self::ZERO;
@@ -179,13 +175,13 @@ impl UIntVec3 for glam::U16Vec3 {
 	fn max_element(self) -> Self::Scalar { self.max_element() }
 	fn element_sum(self) -> Self::Scalar { self.element_sum() }
 	fn element_product(self) -> Self::Scalar { self.element_product() }
-	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
-	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
-	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
-	fn cmpge(self, rhs: Self) -> Self::BVec3Type { self.cmpge(rhs) }
-	fn cmpgt(self, rhs: Self) -> Self::BVec3Type { self.cmpgt(rhs) }
-	fn cmple(self, rhs: Self) -> Self::BVec3Type { self.cmple(rhs) }
-	fn cmplt(self, rhs: Self) -> Self::BVec3Type { self.cmplt(rhs) }
+	fn select(mask: glam::BVec3, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
+	fn cmpeq(self, rhs: Self) -> glam::BVec3 { self.cmpeq(rhs) }
+	fn cmpne(self, rhs: Self) -> glam::BVec3 { self.cmpne(rhs) }
+	fn cmpge(self, rhs: Self) -> glam::BVec3 { self.cmpge(rhs) }
+	fn cmpgt(self, rhs: Self) -> glam::BVec3 { self.cmpgt(rhs) }
+	fn cmple(self, rhs: Self) -> glam::BVec3 { self.cmple(rhs) }
+	fn cmplt(self, rhs: Self) -> glam::BVec3 { self.cmplt(rhs) }
 	fn length_squared(self) -> Self::Scalar { self.length_squared() }
 	fn wrapping_add(self, rhs: Self) -> Self { self.wrapping_add(rhs) }
 	fn wrapping_sub(self, rhs: Self) -> Self { self.wrapping_sub(rhs) }
@@ -205,7 +201,6 @@ impl UIntVec3 for glam::U16Vec3 {
 
 impl UIntVec3 for glam::UVec3 {
 	type Scalar = u32;
-	type BVec3Type = glam::BVec3;
 	type UIntVec2Type = glam::UVec2;
 	type UIntVec4Type = glam::UVec4;
 	const ZERO: Self = Self::ZERO;
@@ -228,13 +223,13 @@ impl UIntVec3 for glam::UVec3 {
 	fn max_element(self) -> Self::Scalar { self.max_element() }
 	fn element_sum(self) -> Self::Scalar { self.element_sum() }
 	fn element_product(self) -> Self::Scalar { self.element_product() }
-	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
-	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
-	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
-	fn cmpge(self, rhs: Self) -> Self::BVec3Type { self.cmpge(rhs) }
-	fn cmpgt(self, rhs: Self) -> Self::BVec3Type { self.cmpgt(rhs) }
-	fn cmple(self, rhs: Self) -> Self::BVec3Type { self.cmple(rhs) }
-	fn cmplt(self, rhs: Self) -> Self::BVec3Type { self.cmplt(rhs) }
+	fn select(mask: glam::BVec3, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
+	fn cmpeq(self, rhs: Self) -> glam::BVec3 { self.cmpeq(rhs) }
+	fn cmpne(self, rhs: Self) -> glam::BVec3 { self.cmpne(rhs) }
+	fn cmpge(self, rhs: Self) -> glam::BVec3 { self.cmpge(rhs) }
+	fn cmpgt(self, rhs: Self) -> glam::BVec3 { self.cmpgt(rhs) }
+	fn cmple(self, rhs: Self) -> glam::BVec3 { self.cmple(rhs) }
+	fn cmplt(self, rhs: Self) -> glam::BVec3 { self.cmplt(rhs) }
 	fn length_squared(self) -> Self::Scalar { self.length_squared() }
 	fn wrapping_add(self, rhs: Self) -> Self { self.wrapping_add(rhs) }
 	fn wrapping_sub(self, rhs: Self) -> Self { self.wrapping_sub(rhs) }
@@ -254,7 +249,6 @@ impl UIntVec3 for glam::UVec3 {
 
 impl UIntVec3 for glam::U64Vec3 {
 	type Scalar = u64;
-	type BVec3Type = glam::BVec3;
 	type UIntVec2Type = glam::U64Vec2;
 	type UIntVec4Type = glam::U64Vec4;
 	const ZERO: Self = Self::ZERO;
@@ -277,13 +271,13 @@ impl UIntVec3 for glam::U64Vec3 {
 	fn max_element(self) -> Self::Scalar { self.max_element() }
 	fn element_sum(self) -> Self::Scalar { self.element_sum() }
 	fn element_product(self) -> Self::Scalar { self.element_product() }
-	fn select(mask: Self::BVec3Type, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
-	fn cmpeq(self, rhs: Self) -> Self::BVec3Type { self.cmpeq(rhs) }
-	fn cmpne(self, rhs: Self) -> Self::BVec3Type { self.cmpne(rhs) }
-	fn cmpge(self, rhs: Self) -> Self::BVec3Type { self.cmpge(rhs) }
-	fn cmpgt(self, rhs: Self) -> Self::BVec3Type { self.cmpgt(rhs) }
-	fn cmple(self, rhs: Self) -> Self::BVec3Type { self.cmple(rhs) }
-	fn cmplt(self, rhs: Self) -> Self::BVec3Type { self.cmplt(rhs) }
+	fn select(mask: glam::BVec3, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
+	fn cmpeq(self, rhs: Self) -> glam::BVec3 { self.cmpeq(rhs) }
+	fn cmpne(self, rhs: Self) -> glam::BVec3 { self.cmpne(rhs) }
+	fn cmpge(self, rhs: Self) -> glam::BVec3 { self.cmpge(rhs) }
+	fn cmpgt(self, rhs: Self) -> glam::BVec3 { self.cmpgt(rhs) }
+	fn cmple(self, rhs: Self) -> glam::BVec3 { self.cmple(rhs) }
+	fn cmplt(self, rhs: Self) -> glam::BVec3 { self.cmplt(rhs) }
 	fn length_squared(self) -> Self::Scalar { self.length_squared() }
 	fn wrapping_add(self, rhs: Self) -> Self { self.wrapping_add(rhs) }
 	fn wrapping_sub(self, rhs: Self) -> Self { self.wrapping_sub(rhs) }

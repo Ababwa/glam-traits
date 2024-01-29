@@ -47,10 +47,10 @@
 	{%- set components = ["x", "y", "z", "w"] | slice(end = dim) %}
 	{%- set dim_minus_one = dim - 1 %}
 	{%- set dim_plus_one = dim + 1 %}
-	{%- if dim == 2 %}
-		{%- set bvec_t = "glam::BVec2" %}
-	{%- else %}
+	{%- if bvec_trait %}
 		{%- set bvec_t = "Self::BVec" ~ dim ~ "Type" %}
+	{%- else %}
+		{%- set bvec_t = "glam::BVec" ~ dim %}
 	{%- endif %}
 {%- else %}
 	{%- set name = base_name %}
@@ -67,8 +67,10 @@ impl {{ name }} for glam::{{ impl_t }} {
 	type Scalar = {{ impl_scalar_t }};
 {%- endif %}
 {%- if dim %}
-	{%- if dim > 2 %}
+	{%- if bvec_trait %}
 	type BVec{{ dim }}Type = glam::{{ impl_bvec_t }};
+	{%- endif %}
+	{%- if dim > 2 %}
 	type {{ base_name ~ dim_minus_one }}Type = glam::{{ impl_minus_one_t }};
 	{%- endif %}
 	{%- if dim < 4 %}

@@ -97,11 +97,11 @@ use num_traits::{
 	{%- set components = ["x", "y", "z", "w"] | slice(end = dim) %}
 	{%- set dim_minus_one = dim - 1 %}
 	{%- set dim_plus_one = dim + 1 %}
-	{%- if dim == 2 %}
-		{%- set bvec_t = "glam::BVec2" %}
-	{%- else %}
+	{%- if bvec_trait %}
 use crate::GBVec{{ dim }};
 		{%- set bvec_t = "Self::BVec" ~ dim ~ "Type" %}
+	{%- else %}
+		{%- set bvec_t = "glam::BVec" ~ dim %}
 	{%- endif %}
 	{%- if dim > 2 %}
 use crate::{{ base_name ~ dim_minus_one }};
@@ -213,8 +213,10 @@ where
 	,
 {%- endif %}
 {%- if dim %}
-	{%- if dim > 2 %}
+	{%- if bvec_trait %}
 	Self::BVec{{ dim }}Type: GBVec{{ dim }},
+	{%- endif %}
+	{%- if dim > 2 %}
 	Self::{{ base_name ~ dim_minus_one }}Type: {{ base_name ~ dim_minus_one }}<Scalar = Self::Scalar>,
 	{%- endif %}
 	{%- if dim < 4 %}
@@ -228,8 +230,10 @@ where
 	type Scalar;
 {%- endif %}
 {%- if dim %}
-	{%- if dim > 2 %}
+	{%- if bvec_trait %}
 	type BVec{{ dim }}Type;
+	{%- endif %}
+	{%- if dim > 2 %}
 	type {{ base_name ~ dim_minus_one }}Type;
 	{%- endif %}
 	{%- if dim < 4 %}
