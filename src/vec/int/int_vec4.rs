@@ -37,25 +37,25 @@ where
 		Copy +
 		PartialEq +
 		Default +
-		Div +
+		Div<Output = Self> +
 		DivAssign +
-		Div<Self::Scalar> +
+		Div<Self::Scalar, Output = Self> +
 		DivAssign<Self::Scalar> +
-		Mul +
+		Mul<Output = Self> +
 		MulAssign +
-		Mul<Self::Scalar> +
+		Mul<Self::Scalar, Output = Self> +
 		MulAssign<Self::Scalar> +
-		Add +
+		Add<Output = Self> +
 		AddAssign +
-		Add<Self::Scalar> +
+		Add<Self::Scalar, Output = Self> +
 		AddAssign<Self::Scalar> +
-		Sub +
+		Sub<Output = Self> +
 		SubAssign +
-		Sub<Self::Scalar> +
+		Sub<Self::Scalar, Output = Self> +
 		SubAssign<Self::Scalar> +
-		Rem +
+		Rem<Output = Self> +
 		RemAssign +
-		Rem<Self::Scalar> +
+		Rem<Self::Scalar, Output = Self> +
 		RemAssign<Self::Scalar> +
 		Sum +
 		Sum<&'a Self> +
@@ -86,11 +86,11 @@ where
 		From<(Self::IntVec3Type, Self::Scalar)> +
 	,
 	Self::Scalar:
-		Div<Self> +
-		Mul<Self> +
-		Add<Self> +
-		Sub<Self> +
-		Rem<Self> +
+		Div<Self, Output = Self> +
+		Mul<Self, Output = Self> +
+		Add<Self, Output = Self> +
+		Sub<Self, Output = Self> +
+		Rem<Self, Output = Self> +
 		Copy +
 		PartialOrd +
 		NumAssign +

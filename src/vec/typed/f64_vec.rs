@@ -26,25 +26,25 @@ where
 		Copy +
 		PartialEq +
 		Default +
-		Div +
+		Div<Output = Self> +
 		DivAssign +
-		Div<f64> +
+		Div<f64, Output = Self> +
 		DivAssign<f64> +
-		Mul +
+		Mul<Output = Self> +
 		MulAssign +
-		Mul<f64> +
+		Mul<f64, Output = Self> +
 		MulAssign<f64> +
-		Add +
+		Add<Output = Self> +
 		AddAssign +
-		Add<f64> +
+		Add<f64, Output = Self> +
 		AddAssign<f64> +
-		Sub +
+		Sub<Output = Self> +
 		SubAssign +
-		Sub<f64> +
+		Sub<f64, Output = Self> +
 		SubAssign<f64> +
-		Rem +
+		Rem<Output = Self> +
 		RemAssign +
-		Rem<f64> +
+		Rem<f64, Output = Self> +
 		RemAssign<f64> +
 		Sum +
 		Sum<&'a Self> +

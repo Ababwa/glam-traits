@@ -128,25 +128,25 @@ where
 		Copy +
 		PartialEq +
 		Default +
-		Div +
+		Div<Output = Self> +
 		DivAssign +
-		Div<{{ scalar_t }}> +
+		Div<{{ scalar_t }}, Output = Self> +
 		DivAssign<{{ scalar_t }}> +
-		Mul +
+		Mul<Output = Self> +
 		MulAssign +
-		Mul<{{ scalar_t }}> +
+		Mul<{{ scalar_t }}, Output = Self> +
 		MulAssign<{{ scalar_t }}> +
-		Add +
+		Add<Output = Self> +
 		AddAssign +
-		Add<{{ scalar_t }}> +
+		Add<{{ scalar_t }}, Output = Self> +
 		AddAssign<{{ scalar_t }}> +
-		Sub +
+		Sub<Output = Self> +
 		SubAssign +
-		Sub<{{ scalar_t }}> +
+		Sub<{{ scalar_t }}, Output = Self> +
 		SubAssign<{{ scalar_t }}> +
-		Rem +
+		Rem<Output = Self> +
 		RemAssign +
-		Rem<{{ scalar_t }}> +
+		Rem<{{ scalar_t }}, Output = Self> +
 		RemAssign<{{ scalar_t }}> +
 		Sum +
 		Sum<&'a Self> +
@@ -187,11 +187,11 @@ where
 	,
 {%- if not strong_t %}
 	Self::Scalar:
-		Div<Self> +
-		Mul<Self> +
-		Add<Self> +
-		Sub<Self> +
-		Rem<Self> +
+		Div<Self, Output = Self> +
+		Mul<Self, Output = Self> +
+		Add<Self, Output = Self> +
+		Sub<Self, Output = Self> +
+		Rem<Self, Output = Self> +
 		Copy +
 		PartialOrd +
 		NumAssign +
