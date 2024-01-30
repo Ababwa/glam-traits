@@ -1,6 +1,9 @@
 mod bvec;
 mod vec;
 
+pub use glam;
+pub use num_traits;
+
 pub use bvec::gbvec::GBVec;
 pub use bvec::gbvec3::GBVec3;
 pub use bvec::gbvec4::GBVec4;
