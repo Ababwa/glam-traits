@@ -229,7 +229,7 @@ macro_rules! impl_gvec {
 			const ONE: Self = Self::ONE;
 			const MIN: Self = Self::MIN;
 			const MAX: Self = Self::MAX;
-			const DIM: usize = 3;
+			const DIM: usize = $dim;
 			fn splat(v: Self::Scalar) -> Self { Self::splat(v) }
 			fn from_slice(slice: &[Self::Scalar]) -> Self { Self::from_slice(slice) }
 			fn write_to_slice(self, slice: &mut [Self::Scalar]) { self.write_to_slice(slice) }
