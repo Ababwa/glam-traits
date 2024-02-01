@@ -285,6 +285,8 @@ where
 	const X: Self;
 	const Y: Self;
 	const AXES: [Self; 2];
+	fn x(self) -> Self::Scalar;
+	fn y(self) -> Self::Scalar;
 	fn new(x: Self::Scalar, y: Self::Scalar) -> Self;
 	fn from_array(a: [Self::Scalar; 2]) -> Self;
 	fn to_array(&self) -> [Self::Scalar; 2];
@@ -296,6 +298,8 @@ macro_rules! impl_gvec2 {
 			const X: Self = Self::X;
 			const Y: Self = Self::Y;
 			const AXES: [Self; 2] = Self::AXES;
+			fn x(self) -> Self::Scalar { self.x }
+			fn y(self) -> Self::Scalar { self.y }
 			fn new(x: Self::Scalar, y: Self::Scalar) -> Self { Self::new(x, y) }
 			fn from_array(a: [Self::Scalar; 2]) -> Self { Self::from_array(a) }
 			fn to_array(&self) -> [Self::Scalar; 2] { self.to_array() }
@@ -329,6 +333,9 @@ where
 	const Y: Self;
 	const Z: Self;
 	const AXES: [Self; 3];
+	fn x(self) -> Self::Scalar;
+	fn y(self) -> Self::Scalar;
+	fn z(self) -> Self::Scalar;
 	fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar) -> Self;
 	fn from_array(a: [Self::Scalar; 3]) -> Self;
 	fn to_array(&self) -> [Self::Scalar; 3];
@@ -342,6 +349,9 @@ macro_rules! impl_gvec3 {
 			const Y: Self = Self::Y;
 			const Z: Self = Self::Z;
 			const AXES: [Self; 3] = Self::AXES;
+			fn x(self) -> Self::Scalar { self.x }
+			fn y(self) -> Self::Scalar { self.y }
+			fn z(self) -> Self::Scalar { self.z }
 			fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar) -> Self { Self::new(x, y, z) }
 			fn from_array(a: [Self::Scalar; 3]) -> Self { Self::from_array(a) }
 			fn to_array(&self) -> [Self::Scalar; 3] { self.to_array() }
@@ -378,6 +388,10 @@ where
 	const Z: Self;
 	const W: Self;
 	const AXES: [Self; 4];
+	fn x(self) -> Self::Scalar;
+	fn y(self) -> Self::Scalar;
+	fn z(self) -> Self::Scalar;
+	fn w(self) -> Self::Scalar;
 	fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar, w: Self::Scalar) -> Self;
 	fn from_array(a: [Self::Scalar; 4]) -> Self;
 	fn to_array(&self) -> [Self::Scalar; 4];
@@ -391,6 +405,10 @@ macro_rules! impl_gvec4 {
 			const Z: Self = Self::Z;
 			const W: Self = Self::W;
 			const AXES: [Self; 4] = Self::AXES;
+			fn x(self) -> Self::Scalar { self.x }
+			fn y(self) -> Self::Scalar { self.y }
+			fn z(self) -> Self::Scalar { self.z }
+			fn w(self) -> Self::Scalar { self.w }
 			fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar, w: Self::Scalar) -> Self { Self::new(x, y, z, w) }
 			fn from_array(a: [Self::Scalar; 4]) -> Self { Self::from_array(a) }
 			fn to_array(&self) -> [Self::Scalar; 4] { self.to_array() }
