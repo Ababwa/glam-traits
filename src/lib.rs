@@ -174,6 +174,7 @@ where
 		IndexMut<usize, Output = Self::Scalar> +
 	,
 	Self::Scalar:
+		'static +
 		Copy +
 		PartialOrd +
 		Add<Self, Output = Self> +
