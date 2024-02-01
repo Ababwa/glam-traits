@@ -27,11 +27,6 @@ use std::{
 		Shr,
 	},
 };
-use num_traits::{
-	NumAssign,
-	NumCast,
-	FromPrimitive,
-};
 use glam::{
 	BVec2,
 	BVec3,
@@ -66,7 +61,6 @@ use glam::{
 };
 
 pub use glam;
-pub use num_traits;
 
 pub trait GBVec
 where
@@ -182,9 +176,6 @@ where
 	Self::Scalar:
 		Copy +
 		PartialOrd +
-		NumAssign +
-		NumCast +
-		FromPrimitive +
 		Add<Self, Output = Self> +
 		Sub<Self, Output = Self> +
 		Mul<Self, Output = Self> +
