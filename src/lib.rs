@@ -3,28 +3,17 @@ use std::{
 	iter::{Product, Sum},
 	hash::Hash,
 	ops::{
-		Add,
-		AddAssign,
-		Sub,
-		SubAssign,
-		Mul,
-		MulAssign,
-		Div,
-		DivAssign,
-		Rem,
-		RemAssign,
-		Index,
-		IndexMut,
-		Neg,
-		Not,
-		BitAnd,
-		BitAndAssign,
-		BitOr,
-		BitOrAssign,
-		BitXor,
-		BitXorAssign,
-		Shl,
-		Shr,
+		Add, AddAssign,
+		Sub, SubAssign,
+		Mul, MulAssign,
+		Div, DivAssign,
+		Rem, RemAssign,
+		BitAnd, BitAndAssign,
+		BitOr, BitOrAssign,
+		BitXor, BitXorAssign,
+		Index, IndexMut,
+		Neg, Not,
+		Shl, Shr,
 	},
 };
 use glam::{
@@ -84,6 +73,7 @@ where
 {
 	const FALSE: Self;
 	const TRUE: Self;
+	const DIM: usize;
 	fn splat(v: bool) -> Self;
 	fn bitmask(self) -> u32;
 	fn any(self) -> bool;
@@ -93,10 +83,11 @@ where
 }
 
 macro_rules! impl_gbvec {
-	($type:ty) => {
+	($type:ty, $dim:literal) => {
 		impl GBVec for $type {
 			const FALSE: Self = Self::FALSE;
 			const TRUE: Self = Self::TRUE;
+			const DIM: usize = $dim;
 			fn splat(v: bool) -> Self { Self::splat(v) }
 			fn bitmask(self) -> u32 { self.bitmask() }
 			fn any(self) -> bool { self.any() }
@@ -107,35 +98,11 @@ macro_rules! impl_gbvec {
 	};
 }
 
-impl_gbvec!(BVec2);
-impl_gbvec!(BVec3);
-impl_gbvec!(BVec3A);
-impl_gbvec!(BVec4);
-impl_gbvec!(BVec4A);
-
-pub trait GBVec3: GBVec + Into<[bool; 3]> + Into<[u32; 3]> {
-	fn new(x: bool, y: bool, z: bool) -> Self;
-}
-
-impl GBVec3 for BVec3 {
-	fn new(x: bool, y: bool, z: bool) -> Self { Self::new(x, y, z) }
-}
-
-impl GBVec3 for BVec3A {
-	fn new(x: bool, y: bool, z: bool) -> Self { Self::new(x, y, z) }
-}
-
-pub trait GBVec4: GBVec + Into<[bool; 4]> + Into<[u32; 4]> {
-	fn new(x: bool, y: bool, z: bool, w: bool) -> Self;
-}
-
-impl GBVec4 for BVec4 {
-	fn new(x: bool, y: bool, z: bool, w: bool) -> Self { Self::new(x, y, z, w) }
-}
-
-impl GBVec4 for BVec4A {
-	fn new(x: bool, y: bool, z: bool, w: bool) -> Self { Self::new(x, y, z, w) }
-}
+impl_gbvec!(BVec2, 2);
+impl_gbvec!(BVec3, 3);
+impl_gbvec!(BVec3A, 3);
+impl_gbvec!(BVec4, 4);
+impl_gbvec!(BVec4A, 4);
 
 pub trait GVec
 where
@@ -327,7 +294,6 @@ where
 		From<(Self::Scalar, Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar, Self::Scalar)> +
 	,
-	Self::BVecType: GBVec3,
 {
 	const X: Self;
 	const Y: Self;
@@ -381,7 +347,6 @@ where
 		From<(Self::Scalar, Self::Scalar, Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar, Self::Scalar, Self::Scalar)> +
 	,
-	Self::BVecType: GBVec4,
 {
 	const X: Self;
 	const Y: Self;
@@ -492,11 +457,7 @@ impl_signedvec2!(I64Vec2);
 impl_signedvec2!(Vec2);
 impl_signedvec2!(DVec2);
 
-pub trait SignedVec3
-where
-	Self: SignedVec + GVec3,
-	Self::BVecType: GBVec3,
-{
+pub trait SignedVec3: SignedVec + GVec3 {
 	const NEG_X: Self;
 	const NEG_Y: Self;
 	const NEG_Z: Self;
@@ -519,11 +480,7 @@ impl_signedvec3!(Vec3);
 impl_signedvec3!(Vec3A);
 impl_signedvec3!(DVec3);
 
-pub trait SignedVec4
-where
-	Self: SignedVec + GVec4,
-	Self::BVecType: GBVec4,
-{
+pub trait SignedVec4: SignedVec + GVec4 {
 	const NEG_X: Self;
 	const NEG_Y: Self;
 	const NEG_Z: Self;
@@ -648,11 +605,7 @@ macro_rules! impl_floatvec2 {
 impl_floatvec2!(Vec2);
 impl_floatvec2!(DVec2);
 
-pub trait FloatVec3
-where
-	Self: FloatVec + SignedVec3,
-	Self::BVecType: GBVec3,
-{
+pub trait FloatVec3: FloatVec + SignedVec3 {
 	fn angle_between(self, rhs: Self) -> Self::Scalar;
 	fn any_orthogonal_vector(&self) -> Self;
 	fn any_orthonormal_vector(&self) -> Self;
@@ -674,11 +627,7 @@ impl_floatvec3!(Vec3);
 impl_floatvec3!(Vec3A);
 impl_floatvec3!(DVec3);
 
-pub trait FloatVec4
-where
-	Self: FloatVec + SignedVec4,
-	Self::BVecType: GBVec4,
-{}
+pub trait FloatVec4: FloatVec + SignedVec4 {}
 
 impl FloatVec4 for Vec4 {}
 impl FloatVec4 for DVec4 {}
