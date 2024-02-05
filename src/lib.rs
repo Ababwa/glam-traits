@@ -843,3 +843,52 @@ pub trait UIntVec4: UIntVec + IntVec4 {}
 impl UIntVec4 for U16Vec4 {}
 impl UIntVec4 for UVec4 {}
 impl UIntVec4 for U64Vec4 {}
+
+pub trait I16Vec: SIntVec<Scalar = i16> {}
+
+impl I16Vec for I16Vec2 {}
+impl I16Vec for I16Vec3 {}
+impl I16Vec for I16Vec4 {}
+
+pub trait U16Vec: UIntVec<Scalar = u16> {}
+
+impl U16Vec for U16Vec2 {}
+impl U16Vec for U16Vec3 {}
+impl U16Vec for U16Vec4 {}
+
+pub trait I32Vec: SIntVec<Scalar = i32> {}
+
+impl I32Vec for IVec2 {}
+impl I32Vec for IVec3 {}
+impl I32Vec for IVec4 {}
+
+pub trait U32Vec: UIntVec<Scalar = u32> {}
+
+impl U32Vec for UVec2 {}
+impl U32Vec for UVec3 {}
+impl U32Vec for UVec4 {}
+
+pub trait I64Vec: SIntVec<Scalar = i64> {}
+
+impl I64Vec for I64Vec2 {}
+impl I64Vec for I64Vec3 {}
+impl I64Vec for I64Vec4 {}
+
+pub trait U64Vec: UIntVec<Scalar = u64> {}
+
+impl U64Vec for U64Vec2 {}
+impl U64Vec for U64Vec3 {}
+impl U64Vec for U64Vec4 {}
+
+pub trait F32Vec: FloatVec<Scalar = f32> {}
+
+impl F32Vec for Vec2 {}
+impl F32Vec for Vec3 {}
+impl F32Vec for Vec3A {}
+impl F32Vec for Vec4 {}
+
+pub trait F64Vec: FloatVec<Scalar = f64> {}
+
+impl F64Vec for DVec2 {}
+impl F64Vec for DVec3 {}
+impl F64Vec for DVec4 {}
