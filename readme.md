@@ -11,15 +11,57 @@ There are traits for the following characteristics:
 
 For lengths "any", 2, 3 and 4:
 
-|              |             |              |              |              |
-| ------------ | ------------| ------------ | ------------ | ------------ |
-|              | Any         | 2            | 3            | 4            |
-| Any          | `GVec`      | `GVec2`      | `GVec3`      | `GVec4`      |
-| Signed       | `SignedVec` | `SignedVec2` | `SignedVec3` | `SignedVec4` |
-| Float        | `FloatVec`  | `FloatVec2`  | `FloatVec3`  | `FloatVec4`  |
-| Int          | `IntVec`    | `IntVec2`    | `IntVec3`    | `IntVec4`    |
-| Signed int   | `SIntVec`   | `SIntVec2`   | `SIntVec3`   | `SintVec4`   |
-| Unsigned int | `UIntVec`   | `UIntVec2`   | `UIntVec3`   | `UIntVec4`   |
+<table>
+	<tr>
+		<td></td>
+		<td>Any</td>
+		<td>2</td>
+		<td>3</td>
+		<td>4</td>
+	</tr>
+	<tr>
+		<td>Any</td>
+		<td><code>GVec</code></td>
+		<td><code>GVec2</code></td>
+		<td><code>GVec3</code></td>
+		<td><code>GVec4</code></td>
+	</tr>
+	<tr>
+		<td>Signed</td>
+		<td><code>SignedVec</code></td>
+		<td><code>SignedVec2</code></td>
+		<td><code>SignedVec3</code></td>
+		<td><code>SignedVec4</code></td>
+	</tr>
+	<tr>
+		<td>Float</td>
+		<td><code>FloatVec</code></td>
+		<td><code>FloatVec2</code></td>
+		<td><code>FloatVec3</code></td>
+		<td><code>FloatVec4</code></td>
+	</tr>
+	<tr>
+		<td>Int</td>
+		<td><code>IntVec</code></td>
+		<td><code>IntVec2</code></td>
+		<td><code>IntVec3</code></td>
+		<td><code>IntVec4</code></td>
+	</tr>
+	<tr>
+		<td>Signed int</td>
+		<td><code>SIntVec</code></td>
+		<td><code>SIntVec2</code></td>
+		<td><code>SIntVec3</code></td>
+		<td><code>SIntVec4</code></td>
+	</tr>
+	<tr>
+		<td>Unsigned int</td>
+		<td><code>UIntVec</code></td>
+		<td><code>UIntVec2</code></td>
+		<td><code>UIntVec3</code></td>
+		<td><code>UIntVec4</code></td>
+	</tr>
+</table>
 
 As well as for concrete types of any length:
 
