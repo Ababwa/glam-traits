@@ -186,6 +186,8 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> Self::Scalar;
 	fn max_element(self) -> Self::Scalar;
+	fn element_sum(self) -> Self::Scalar;
+	fn element_product(self) -> Self::Scalar;
 	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self;
 	fn cmpeq(self, rhs: Self) -> Self::BVecType;
 	fn cmpne(self, rhs: Self) -> Self::BVecType;
@@ -216,6 +218,8 @@ macro_rules! impl_gvec {
 			fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 			fn min_element(self) -> Self::Scalar { self.min_element() }
 			fn max_element(self) -> Self::Scalar { self.max_element() }
+			fn element_sum(self) -> Self::Scalar { self.element_sum() }
+			fn element_product(self) -> Self::Scalar { self.element_product() }
 			fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
 			fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
 			fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
