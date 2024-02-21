@@ -28,8 +28,6 @@ use glam::{
 	DVec2, DVec3, DVec4,
 };
 
-pub use glam;
-
 pub trait GBVec
 where
 	Self:
