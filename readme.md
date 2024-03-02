@@ -1,4 +1,12 @@
 # glam-traits
+
+[![Latest Version]][crates.io] [![docs]][docs.rs]
+
+[Latest Version]: https://img.shields.io/crates/v/glam-traits.svg
+[crates.io]: https://crates.io/crates/glam-traits/
+[docs]: https://docs.rs/glam-traits/badge.svg
+[docs.rs]: https://docs.rs/glam-traits/
+
 Traits for the vectors in [glam](https://github.com/bitshifter/glam-rs/).
 
 There are traits for the following characteristics:
@@ -66,5 +74,7 @@ For lengths "any", 2, 3 and 4:
 As well as for concrete types of any length:
 
 `I16Vec`, `U16Vec`, `I32Vec`, `U32Vec`, `I64Vec`, `U64Vec`, `F32Vec`, `F64Vec`
+
+`GBVec` is also provided to cover boolean vectors.
 
 Traits are implemented for the appropriate glam types.
