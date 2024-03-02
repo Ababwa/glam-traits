@@ -1,3 +1,33 @@
+/*!
+This crate provides traits for the vectors in [glam](https://docs.rs/glam).
+There are traits for the following characteristics:
+* "Any"
+* Signed
+* Float
+* Int
+* Signed int
+* Unsigned int
+
+For lengths "any", 2, 3 and 4:
+
+|            |Any          |2             |3             |4             |
+|------------|-------------|--------------|--------------|--------------|
+|Any         |[`GVec`]     |[`GVec2`]     |[`GVec3`]     |[`GVec4`]     |
+|Signed      |[`SignedVec`]|[`SignedVec2`]|[`SignedVec3`]|[`SignedVec4`]|
+|Float       |[`FloatVec`] |[`FloatVec2`] |[`FloatVec3`] |[`FloatVec4`] |
+|Int         |[`IntVec`]   |[`IntVec2`]   |[`IntVec3`]   |[`IntVec4`]   |
+|Signed int  |[`SIntVec`]  |[`SIntVec2`]  |[`SIntVec3`]  |[`SIntVec4`]  |
+|Unsigned int|[`UIntVec`]  |[`UIntVec2`]  |[`UIntVec3`]  |[`UIntVec4`]  |
+
+As well as for concrete types of any length:
+
+[`I16Vec`], [`U16Vec`], [`I32Vec`], [`U32Vec`], [`I64Vec`], [`U64Vec`], [`F32Vec`], [`F64Vec`]
+
+[`GBVec`] is also provided to cover boolean vectors.
+
+Traits are implemented for the appropriate `glam` types.
+*/
+
 use std::{
 	fmt::{Debug, Display},
 	iter::{Product, Sum},
@@ -28,6 +58,10 @@ use glam::{
 	DVec2, DVec3, DVec4,
 };
 
+/**
+Boolean vector of any length. Behavior common to all `glam` boolean vectors is included in this
+trait.
+*/
 pub trait GBVec
 where
 	Self:
@@ -81,6 +115,9 @@ impl_gbvec!(BVec3A, 3);
 impl_gbvec!(BVec4, 4);
 impl_gbvec!(BVec4A, 4);
 
+/**
+Generic vector of any length. Behavior common to all `glam` vectors is included in this trait.
+*/
 pub trait GVec
 where
 	for <'a> Self:
@@ -214,6 +251,10 @@ impl_gvec!(DVec2, f64, BVec2, 2);
 impl_gvec!(DVec3, f64, BVec3, 3);
 impl_gvec!(DVec4, f64, BVec4, 4);
 
+/**
+Generic vector of length 2. Behavior common to all `glam` vectors of length 2 is included in this
+trait.
+*/
 pub trait GVec2
 where
 	Self:
@@ -260,6 +301,9 @@ impl_gvec2!(U64Vec2);
 impl_gvec2!(Vec2);
 impl_gvec2!(DVec2);
 
+/**
+Generic vector of length 3. Behavior common to all `glam` vectors of length 3 is included in this trait.
+*/
 pub trait GVec3
 where
 	Self:
@@ -313,6 +357,10 @@ impl_gvec3!(Vec3);
 impl_gvec3!(Vec3A);
 impl_gvec3!(DVec3);
 
+/**
+Generic vector of length 4. Behavior common to all `glam` vectors of length 4 is included in this
+trait.
+*/
 pub trait GVec4
 where
 	Self:
@@ -367,6 +415,10 @@ impl_gvec4!(U64Vec4);
 impl_gvec4!(Vec4);
 impl_gvec4!(DVec4);
 
+/**
+Vector of any length whose elements are a signed type. Behavior common to all `glam` vectors of
+signed types is included in this trait.
+*/
 pub trait SignedVec: GVec + Neg {
 	const NEG_ONE: Self;
 	fn abs(self) -> Self;
@@ -408,6 +460,10 @@ impl_signedvec!(DVec2);
 impl_signedvec!(DVec3);
 impl_signedvec!(DVec4);
 
+/**
+Vector of length 2 whose elements are a signed type. Behavior common to all `glam` vectors of
+length 2 of signed types is included in this trait.
+*/
 pub trait SignedVec2: SignedVec + GVec2 {
 	const NEG_X: Self;
 	const NEG_Y: Self;
@@ -434,6 +490,10 @@ impl_signedvec2!(I64Vec2);
 impl_signedvec2!(Vec2);
 impl_signedvec2!(DVec2);
 
+/**
+Vector of length 3 whose elements are a signed type. Behavior common to all `glam` vectors of
+length 3 of signed types is included in this trait.
+*/
 pub trait SignedVec3: SignedVec + GVec3 {
 	const NEG_X: Self;
 	const NEG_Y: Self;
@@ -457,6 +517,10 @@ impl_signedvec3!(Vec3);
 impl_signedvec3!(Vec3A);
 impl_signedvec3!(DVec3);
 
+/**
+Vector of length 4 whose elements are a signed type. Behavior common to all `glam` vectors of
+length 4 of signed types is included in this trait.
+*/
 pub trait SignedVec4: SignedVec + GVec4 {
 	const NEG_X: Self;
 	const NEG_Y: Self;
@@ -481,6 +545,10 @@ impl_signedvec4!(I64Vec4);
 impl_signedvec4!(Vec4);
 impl_signedvec4!(DVec4);
 
+/**
+Vector of any length whose elements are a floating-point type. Behavior common to all `glam`
+vectors of floating-point types is included in this trait.
+*/
 pub trait FloatVec: SignedVec {
 	const NAN: Self;
 	const INFINITY: Self;
@@ -563,6 +631,10 @@ impl_floatvec!(DVec2);
 impl_floatvec!(DVec3);
 impl_floatvec!(DVec4);
 
+/**
+Vector of length 2 whose elements are a floating-point type. Behavior common to all `glam` vectors
+of length 2 of floating-point types is included in this trait.
+*/
 pub trait FloatVec2: FloatVec + SignedVec2 {
 	fn angle_between(self, rhs: Self) -> Self::Scalar;
 	fn from_angle(angle: Self::Scalar) -> Self;
@@ -582,6 +654,10 @@ macro_rules! impl_floatvec2 {
 impl_floatvec2!(Vec2);
 impl_floatvec2!(DVec2);
 
+/**
+Vector of length 3 whose elements are a floating-point type. Behavior common to all `glam` vectors
+of length 3 of floating-point types is included in this trait.
+*/
 pub trait FloatVec3: FloatVec + SignedVec3 {
 	fn angle_between(self, rhs: Self) -> Self::Scalar;
 	fn any_orthogonal_vector(&self) -> Self;
@@ -604,11 +680,19 @@ impl_floatvec3!(Vec3);
 impl_floatvec3!(Vec3A);
 impl_floatvec3!(DVec3);
 
+/**
+Vector of length 4 whose elements are a floating-point type. This is a marker trait as there is no
+behavior specific to `glam` vectors of length 4 of floating-point types.
+*/
 pub trait FloatVec4: FloatVec + SignedVec4 {}
 
 impl FloatVec4 for Vec4 {}
 impl FloatVec4 for DVec4 {}
 
+/**
+Vector of any length whose elements are an integer type. Behavior common to all `glam` vectors of
+integer types is included in this type.
+*/
 pub trait IntVec
 where
 	Self:
@@ -683,6 +767,10 @@ impl_intvec!(U64Vec2);
 impl_intvec!(U64Vec3);
 impl_intvec!(U64Vec4);
 
+/**
+Vector of length 2 whose elements are an integer type. This is a marker trait as there is no
+behavior specific to `glam` vectors of length 2 of integer types.
+*/
 pub trait IntVec2: IntVec + GVec2 {}
 
 impl IntVec2 for I16Vec2 {}
@@ -692,6 +780,10 @@ impl IntVec2 for UVec2 {}
 impl IntVec2 for I64Vec2 {}
 impl IntVec2 for U64Vec2 {}
 
+/**
+Vector of length 3 whose elements are an integer type. This is a marker trait as there is no
+behavior specific to `glam` vectors of length 3 of integer types.
+*/
 pub trait IntVec3: IntVec + GVec3<BVecType = BVec3> {}
 
 impl IntVec3 for I16Vec3 {}
@@ -701,6 +793,11 @@ impl IntVec3 for UVec3 {}
 impl IntVec3 for I64Vec3 {}
 impl IntVec3 for U64Vec3 {}
 
+
+/**
+Vector of length 4 whose elements are an integer type. This is a marker trait as there is no
+behavior specific to `glam` vectors of length 4 of integer types.
+*/
 pub trait IntVec4: IntVec + GVec4<BVecType = BVec4> {}
 
 impl IntVec4 for I16Vec4 {}
@@ -710,6 +807,10 @@ impl IntVec4 for UVec4 {}
 impl IntVec4 for I64Vec4 {}
 impl IntVec4 for U64Vec4 {}
 
+/**
+Vector of any length whose elements are a signed integer type. This is a marker trait as there is
+no behavior specific to `glam` vectors of signed integer types.
+*/
 pub trait SIntVec: IntVec + SignedVec {}
 
 impl SIntVec for I16Vec2 {}
@@ -722,24 +823,40 @@ impl SIntVec for I64Vec2 {}
 impl SIntVec for I64Vec3 {}
 impl SIntVec for I64Vec4 {}
 
+/**
+Vector of length 2 whose elements are a signed integer type. This is a marker trait as there is no
+behavior specific to `glam` vectors of length 2 of signed integer types.
+*/
 pub trait SIntVec2: SIntVec + IntVec2 {}
 
 impl SIntVec2 for I16Vec2 {}
 impl SIntVec2 for IVec2 {}
 impl SIntVec2 for I64Vec2 {}
 
+/**
+Vector of length 3 whose elements are a signed integer type. This is a marker trait as there is no
+behavior specific to `glam` vectors of length 3 of signed integer types.
+*/
 pub trait SIntVec3: SIntVec + IntVec3 {}
 
 impl SIntVec3 for I16Vec3 {}
 impl SIntVec3 for IVec3 {}
 impl SIntVec3 for I64Vec3 {}
 
+/**
+Vector of length 4 whose elements are a signed integer type. This is a marker trait as there is no
+behavior specific to `glam` vectors of length 4 of signed integer types.
+*/
 pub trait SIntVec4: SIntVec + IntVec4 {}
 
 impl SIntVec4 for I16Vec4 {}
 impl SIntVec4 for IVec4 {}
 impl SIntVec4 for I64Vec4 {}
 
+/**
+Vector of any length whose elements are an unsigned integer type. This is a marker trait as there
+is no behavior specific to `glam` vectors of unsigned integer types.
+*/
 pub trait UIntVec: IntVec {}
 
 impl UIntVec for U16Vec2 {}
@@ -752,60 +869,100 @@ impl UIntVec for U64Vec2 {}
 impl UIntVec for U64Vec3 {}
 impl UIntVec for U64Vec4 {}
 
+/**
+Vector of length 2 whose elements are an unsigned integer type. This is a marker trait as there is
+no behavior specific to `glam` vectors of length 2 of unsigned integer types.
+*/
 pub trait UIntVec2: UIntVec + IntVec2 {}
 
 impl UIntVec2 for U16Vec2 {}
 impl UIntVec2 for UVec2 {}
 impl UIntVec2 for U64Vec2 {}
 
+/**
+Vector of length 3 whose elements are an unsigned integer type. This is a marker trait as there is
+no behavior specific to `glam` vectors of length 3 of unsigned integer types.
+*/
 pub trait UIntVec3: UIntVec + IntVec3 {}
 
 impl UIntVec3 for U16Vec3 {}
 impl UIntVec3 for UVec3 {}
 impl UIntVec3 for U64Vec3 {}
 
+/**
+Vector of length 4 whose elements are an unsigned integer type. This is a marker trait as there is
+no behavior specific to `glam` vectors of length 4 of unsigned integer types.
+*/
 pub trait UIntVec4: UIntVec + IntVec4 {}
 
 impl UIntVec4 for U16Vec4 {}
 impl UIntVec4 for UVec4 {}
 impl UIntVec4 for U64Vec4 {}
 
+/**
+Vector of any length whose elements are [`i16`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`i16`].
+*/
 pub trait I16Vec: SIntVec<Scalar = i16> {}
 
 impl I16Vec for I16Vec2 {}
 impl I16Vec for I16Vec3 {}
 impl I16Vec for I16Vec4 {}
 
+/**
+Vector of any length whose elements are [`u16`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`u16`].
+*/
 pub trait U16Vec: UIntVec<Scalar = u16> {}
 
 impl U16Vec for U16Vec2 {}
 impl U16Vec for U16Vec3 {}
 impl U16Vec for U16Vec4 {}
 
+/**
+Vector of any length whose elements are [`i32`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`i32`].
+*/
 pub trait I32Vec: SIntVec<Scalar = i32> {}
 
 impl I32Vec for IVec2 {}
 impl I32Vec for IVec3 {}
 impl I32Vec for IVec4 {}
 
+/**
+Vector of any length whose elements are [`u32`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`u32`].
+*/
 pub trait U32Vec: UIntVec<Scalar = u32> {}
 
 impl U32Vec for UVec2 {}
 impl U32Vec for UVec3 {}
 impl U32Vec for UVec4 {}
 
+/**
+Vector of any length whose elements are [`i64`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`i64`].
+*/
 pub trait I64Vec: SIntVec<Scalar = i64> {}
 
 impl I64Vec for I64Vec2 {}
 impl I64Vec for I64Vec3 {}
 impl I64Vec for I64Vec4 {}
 
+/**
+Vector of any length whose elements are [`u64`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`u64`].
+*/
 pub trait U64Vec: UIntVec<Scalar = u64> {}
 
 impl U64Vec for U64Vec2 {}
 impl U64Vec for U64Vec3 {}
 impl U64Vec for U64Vec4 {}
 
+/**
+Vector of any length whose elements are [`f32`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`f32`].
+*/
 pub trait F32Vec: FloatVec<Scalar = f32> {}
 
 impl F32Vec for Vec2 {}
@@ -813,6 +970,10 @@ impl F32Vec for Vec3 {}
 impl F32Vec for Vec3A {}
 impl F32Vec for Vec4 {}
 
+/**
+Vector of any length whose elements are [`f64`]. This is a marker trait as there is no behavior
+specific to `glam` vectors of [`f64`].
+*/
 pub trait F64Vec: FloatVec<Scalar = f64> {}
 
 impl F64Vec for DVec2 {}
