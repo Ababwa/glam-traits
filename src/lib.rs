@@ -28,6 +28,9 @@ As well as for concrete types of any length:
 Traits are implemented for the appropriate `glam` types.
 */
 
+#[cfg(feature = "ext")]
+pub mod ext;
+
 use std::{
 	fmt::{Debug, Display},
 	iter::{Product, Sum},
@@ -302,7 +305,8 @@ impl_gvec2!(Vec2);
 impl_gvec2!(DVec2);
 
 /**
-Generic vector of length 3. Behavior common to all `glam` vectors of length 3 is included in this trait.
+Generic vector of length 3. Behavior common to all `glam` vectors of length 3 is included in this
+trait.
 */
 pub trait GVec3
 where
