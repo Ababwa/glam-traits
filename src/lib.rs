@@ -227,6 +227,7 @@ macro_rules! impl_gvec {
 		}
 	};
 }
+pub(crate) use impl_gvec;
 
 impl_gvec!(I16Vec2, i16, BVec2, 2);
 impl_gvec!(I16Vec3, i16, BVec3, 3);
@@ -294,6 +295,7 @@ macro_rules! impl_gvec2 {
 		}
 	};
 }
+pub(crate) use impl_gvec2;
 
 impl_gvec2!(I16Vec2);
 impl_gvec2!(U16Vec2);
@@ -350,6 +352,7 @@ macro_rules! impl_gvec3 {
 		}
 	};
 }
+pub(crate) use impl_gvec3;
 
 impl_gvec3!(I16Vec3);
 impl_gvec3!(U16Vec3);
@@ -409,6 +412,7 @@ macro_rules! impl_gvec4 {
 		}
 	};
 }
+pub(crate) use impl_gvec4;
 
 impl_gvec4!(I16Vec4);
 impl_gvec4!(U16Vec4);
@@ -446,6 +450,7 @@ macro_rules! impl_signedvec {
 		}
 	};
 }
+pub(crate) use impl_signedvec;
 
 impl_signedvec!(I16Vec2);
 impl_signedvec!(I16Vec3);
@@ -487,6 +492,7 @@ macro_rules! impl_signedvec2 {
 		}
 	};
 }
+pub(crate) use impl_signedvec2;
 
 impl_signedvec2!(I16Vec2);
 impl_signedvec2!(IVec2);
@@ -513,6 +519,7 @@ macro_rules! impl_signedvec3 {
 		}
 	};
 }
+pub(crate) use impl_signedvec3;
 
 impl_signedvec3!(I16Vec3);
 impl_signedvec3!(IVec3);
@@ -542,6 +549,7 @@ macro_rules! impl_signedvec4 {
 		}
 	};
 }
+pub(crate) use impl_signedvec4;
 
 impl_signedvec4!(I16Vec4);
 impl_signedvec4!(IVec4);
@@ -695,7 +703,7 @@ impl FloatVec4 for DVec4 {}
 
 /**
 Vector of any length whose elements are an integer type. Behavior common to all `glam` vectors of
-integer types is included in this type.
+integer types is included in this trait.
 */
 pub trait IntVec
 where
@@ -751,6 +759,7 @@ macro_rules! impl_intvec {
 		}
 	};
 }
+pub(crate) use impl_intvec;
 
 impl_intvec!(I16Vec2);
 impl_intvec!(I16Vec3);
@@ -772,10 +781,20 @@ impl_intvec!(U64Vec3);
 impl_intvec!(U64Vec4);
 
 /**
-Vector of length 2 whose elements are an integer type. This is a marker trait as there is no
-behavior specific to `glam` vectors of length 2 of integer types.
+Vector of length 2 whose elements are an integer type. Behavior common to all `glam` vectors
+of length 2 of integer types is included in this trait.
 */
-pub trait IntVec2: IntVec + GVec2 {}
+pub trait IntVec2
+where
+	Self:
+		IntVec +
+		GVec2 +
+		Shl<IVec2, Output = Self> +
+		Shr<IVec2, Output = Self> +
+		Shl<UVec2, Output = Self> +
+		Shr<UVec2, Output = Self> +
+	,
+{}
 
 impl IntVec2 for I16Vec2 {}
 impl IntVec2 for U16Vec2 {}
@@ -785,10 +804,20 @@ impl IntVec2 for I64Vec2 {}
 impl IntVec2 for U64Vec2 {}
 
 /**
-Vector of length 3 whose elements are an integer type. This is a marker trait as there is no
-behavior specific to `glam` vectors of length 3 of integer types.
+Vector of length 3 whose elements are an integer type. Behavior common to all `glam` vectors
+of length 3 of integer types is included in this trait.
 */
-pub trait IntVec3: IntVec + GVec3<BVecType = BVec3> {}
+pub trait IntVec3
+where
+	Self:
+		IntVec +
+		GVec3<BVecType = BVec3> +
+		Shl<IVec3, Output = Self> +
+		Shr<IVec3, Output = Self> +
+		Shl<UVec3, Output = Self> +
+		Shr<UVec3, Output = Self> +
+	,
+{}
 
 impl IntVec3 for I16Vec3 {}
 impl IntVec3 for U16Vec3 {}
@@ -799,10 +828,20 @@ impl IntVec3 for U64Vec3 {}
 
 
 /**
-Vector of length 4 whose elements are an integer type. This is a marker trait as there is no
-behavior specific to `glam` vectors of length 4 of integer types.
+Vector of length 4 whose elements are an integer type. Behavior common to all `glam` vectors
+of length 4 of integer types is included in this trait.
 */
-pub trait IntVec4: IntVec + GVec4<BVecType = BVec4> {}
+pub trait IntVec4
+where
+	Self:
+		IntVec +
+		GVec4<BVecType = BVec4> +
+		Shl<IVec4, Output = Self> +
+		Shr<IVec4, Output = Self> +
+		Shl<UVec4, Output = Self> +
+		Shr<UVec4, Output = Self> +
+	,
+{}
 
 impl IntVec4 for I16Vec4 {}
 impl IntVec4 for U16Vec4 {}

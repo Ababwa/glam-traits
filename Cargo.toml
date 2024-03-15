@@ -9,6 +9,7 @@ repository = "https://github.com/Ababwa/glam-traits"
 
 [dependencies]
 glam = "0.25.0"
+num-traits = { version = "0.2.18", optional = true }
 
 [features]
-ext = []
+ext = ["dep:num-traits"]
