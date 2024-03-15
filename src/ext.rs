@@ -509,6 +509,6 @@ Panics if the length of `indices` is less than `V::DIM`.
 
 Panics if an index exceeds the bounds of `vecs`.
 */
-pub fn select<V: GVec, I: AsPrimitive<usize>>(vecs: &[V], indices: &[I]) -> V {
+pub fn select<V: GVec, I: AsPrimitive<usize>, D: Index<usize, Output = I>>(vecs: &[V], indices: &D) -> V {
 	V::from_slice(&(0..V::DIM).map(|i| vecs[indices[i].as_()][i]).collect::<Vec<_>>())
 }
