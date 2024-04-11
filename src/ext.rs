@@ -224,7 +224,7 @@ macro_rules! signed {
 		pub fn abs(self) -> Self { Self { $($symbol: self.$symbol.abs(),)* } }
 		pub fn signum(self) -> Self { Self { $($symbol: self.$symbol.signum(),)* } }
 		pub fn is_negative_bitmask(self) -> u32 {
-			sep!($(((self.$symbol.is_negative() as u32) << $ord)),*; |)
+			$(((self.$symbol.is_negative() as u32) << $ord))|*
 		}
 		pub fn distance_squared(self, rhs: Self) -> $scalar { (self - rhs).length_squared() }
 		pub fn div_euclid(self, rhs: Self) -> Self {
@@ -293,6 +293,8 @@ macro_rules! decl_vec {
 			pub fn clamp(self, min: Self, max: Self) -> Self { self.max(min).min(max) }
 			pub fn min_element(self) -> $scalar { nest!(min $(, self.$symbol)*) }
 			pub fn max_element(self) -> $scalar { nest!(max $(, self.$symbol)*) }
+			pub fn element_sum(self) -> $scalar { sep!($(self.$symbol),*; +) }
+			pub fn element_product(self) -> $scalar { sep!($(self.$symbol),*; *) }
 			cmp_fn!(cmpeq, eq, $bvec, $($symbol),*);
 			cmp_fn!(cmpne, ne, $bvec, $($symbol),*);
 			cmp_fn!(cmpge, ge, $bvec, $($symbol),*);
