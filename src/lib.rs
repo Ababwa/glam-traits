@@ -1,5 +1,6 @@
 /*!
 This crate provides traits for the vectors in [glam](https://docs.rs/glam).
+
 There are traits for the following characteristics:
 * "Any"
 * Signed

@@ -1,3 +1,11 @@
+/*!
+This module provides extensions to [glam](https://docs.rs/glam).
+
+Including:
+* 8-bit integer vectors
+* A generalized vector `select()` function.
+*/
+
 use std::{
 	fmt::{Debug, Display},
 	iter::{Product, Sum},
