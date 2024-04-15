@@ -410,9 +410,9 @@ macro_rules! decl_vec {
 decl_vec!(
 	u8vec2, U8Vec2, BVec2, u8, 2, false, (U8Vec3), (), as_i8vec2, I8Vec2, i8,
 	as_i16vec2, I16Vec2, as_u16vec2, U16Vec2,
-	as_i32vec2, IVec2, as_u32vec2, UVec2,
+	as_ivec2, IVec2, as_uvec2, UVec2,
 	as_i64vec2, I64Vec2, as_u64vec2, U64Vec2,
-	as_f32vec2, Vec2, as_f64vec2, DVec2,
+	as_vec2, Vec2, as_f64vec2, DVec2,
 	(0, x, X, NEG_X, (1, 0)),
 	(1, y, Y, NEG_Y, (0, 1)),
 );
@@ -425,9 +425,9 @@ impl UIntVec2 for U8Vec2 {}
 decl_vec!(
 	u8vec3, U8Vec3, BVec3, u8, 3, false, (U8Vec4), (U8Vec2), as_i8vec3, I8Vec3, i8,
 	as_i16vec3, I16Vec3, as_u16vec3, U16Vec3,
-	as_i32vec3, IVec3, as_u32vec3, UVec3,
+	as_ivec3, IVec3, as_uvec3, UVec3,
 	as_i64vec3, I64Vec3, as_u64vec3, U64Vec3,
-	as_f32vec3, Vec3, as_f64vec3, DVec3,
+	as_vec3, Vec3, as_f64vec3, DVec3,
 	(0, x, X, NEG_X, (1, 0, 0)),
 	(1, y, Y, NEG_Y, (0, 1, 0)),
 	(2, z, Z, NEG_Z, (0, 0, 1)),
@@ -441,9 +441,9 @@ impl UIntVec3 for U8Vec3 {}
 decl_vec!(
 	u8vec4, U8Vec4, BVec4, u8, 4, false, (), (U8Vec3), as_i8vec4, I8Vec4, i8,
 	as_i16vec4, I16Vec4, as_u16vec4, U16Vec4,
-	as_i32vec4, IVec4, as_u32vec4, UVec4,
+	as_ivec4, IVec4, as_uvec4, UVec4,
 	as_i64vec4, I64Vec4, as_u64vec4, U64Vec4,
-	as_f32vec4, Vec4, as_f64vec4, DVec4,
+	as_vec4, Vec4, as_f64vec4, DVec4,
 	(0, x, X, NEG_X, (1, 0, 0, 0)),
 	(1, y, Y, NEG_Y, (0, 1, 0, 0)),
 	(2, z, Z, NEG_Z, (0, 0, 1, 0)),
@@ -458,9 +458,9 @@ impl UIntVec4 for U8Vec4 {}
 decl_vec!(
 	i8vec2, I8Vec2, BVec2, i8, 2, true, (I8Vec3), (), as_u8vec2, U8Vec2, u8,
 	as_i16vec2, I16Vec2, as_u16vec2, U16Vec2,
-	as_i32vec2, IVec2, as_u32vec2, UVec2,
+	as_ivec2, IVec2, as_uvec2, UVec2,
 	as_i64vec2, I64Vec2, as_u64vec2, U64Vec2,
-	as_f32vec2, Vec2, as_f64vec2, DVec2,
+	as_vec2, Vec2, as_f64vec2, DVec2,
 	(0, x, X, NEG_X, (1, 0)),
 	(1, y, Y, NEG_Y, (0, 1)),
 );
@@ -475,9 +475,9 @@ impl SIntVec2 for I8Vec2 {}
 decl_vec!(
 	i8vec3, I8Vec3, BVec3, i8, 3, true, (I8Vec4), (I8Vec2), as_u8vec3, U8Vec3, u8,
 	as_i16vec3, I16Vec3, as_u16vec3, U16Vec3,
-	as_i32vec3, IVec3, as_u32vec3, UVec3,
+	as_ivec3, IVec3, as_uvec3, UVec3,
 	as_i64vec3, I64Vec3, as_u64vec3, U64Vec3,
-	as_f32vec3, Vec3, as_f64vec3, DVec3,
+	as_vec3, Vec3, as_f64vec3, DVec3,
 	(0, x, X, NEG_X, (1, 0, 0)),
 	(1, y, Y, NEG_Y, (0, 1, 0)),
 	(2, z, Z, NEG_Z, (0, 0, 1)),
@@ -493,9 +493,9 @@ impl SIntVec3 for I8Vec3 {}
 decl_vec!(
 	i8vec4, I8Vec4, BVec4, i8, 4, true, (), (I8Vec3), as_u8vec4, U8Vec4, u8,
 	as_i16vec4, I16Vec4, as_u16vec4, U16Vec4,
-	as_i32vec4, IVec4, as_u32vec4, UVec4,
+	as_ivec4, IVec4, as_uvec4, UVec4,
 	as_i64vec4, I64Vec4, as_u64vec4, U64Vec4,
-	as_f32vec4, Vec4, as_f64vec4, DVec4,
+	as_vec4, Vec4, as_f64vec4, DVec4,
 	(0, x, X, NEG_X, (1, 0, 0, 0)),
 	(1, y, Y, NEG_Y, (0, 1, 0, 0)),
 	(2, z, Z, NEG_Z, (0, 0, 1, 0)),
