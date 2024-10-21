@@ -62,13 +62,19 @@ use glam::{
 	DVec2, DVec3, DVec4,
 };
 
+mod private {
+	pub trait Sealed {}
+}
+use private::Sealed;
+
 /**
-Boolean vector of any length. Behavior common to all `glam` boolean vectors is included in this
+Boolean vector of any length.
 trait.
 */
 pub trait GBVec
 where
 	Self:
+		Sealed +
 		Clone +
 		Copy +
 		PartialEq +
@@ -99,6 +105,7 @@ where
 
 macro_rules! impl_gbvec {
 	($type:ty, $dim:literal) => {
+		impl Sealed for $type {}
 		impl GBVec for $type {
 			const FALSE: Self = Self::FALSE;
 			const TRUE: Self = Self::TRUE;
@@ -120,11 +127,12 @@ impl_gbvec!(BVec4, 4);
 impl_gbvec!(BVec4A, 4);
 
 /**
-Generic vector of any length. Behavior common to all `glam` vectors is included in this trait.
+Generic vector of any length.
 */
 pub trait GVec
 where
 	for <'a> Self:
+		Sealed +
 		Clone +
 		Copy +
 		PartialEq +
@@ -132,52 +140,89 @@ where
 		Display +
 		Debug +
 		Add<Output = Self> +
+		Add<&'a Self, Output = Self> +
 		Add<Self::Scalar, Output = Self> +
+		Add<&'a Self::Scalar, Output = Self> +
 		AddAssign +
+		AddAssign<&'a Self> +
 		AddAssign<Self::Scalar> +
+		AddAssign<&'a Self::Scalar> +
 		Sub<Output = Self> +
+		Sub<&'a Self, Output = Self> +
 		Sub<Self::Scalar, Output = Self> +
+		Sub<&'a Self::Scalar, Output = Self> +
 		SubAssign +
+		SubAssign<&'a Self> +
 		SubAssign<Self::Scalar> +
+		SubAssign<&'a Self::Scalar> +
 		Mul<Output = Self> +
+		Mul<&'a Self, Output = Self> +
 		Mul<Self::Scalar, Output = Self> +
+		Mul<&'a Self::Scalar, Output = Self> +
 		MulAssign +
+		MulAssign<&'a Self> +
 		MulAssign<Self::Scalar> +
+		MulAssign<&'a Self::Scalar> +
 		Div<Output = Self> +
+		Div<&'a Self, Output = Self> +
 		Div<Self::Scalar, Output = Self> +
+		Div<&'a Self::Scalar, Output = Self> +
 		DivAssign +
+		DivAssign<&'a Self> +
 		DivAssign<Self::Scalar> +
+		DivAssign<&'a Self::Scalar> +
 		Rem<Output = Self> +
+		Rem<&'a Self, Output = Self> +
 		Rem<Self::Scalar, Output = Self> +
+		Rem<&'a Self::Scalar, Output = Self> +
 		RemAssign +
+		RemAssign<&'a Self> +
 		RemAssign<Self::Scalar> +
+		RemAssign<&'a Self::Scalar> +
+		AsRef<Self::Array> +
+		AsMut<Self::Array> +
+		From<Self::Array> +
+		Into<Self::Array> +
 		Sum +
 		Sum<&'a Self> +
 		Product +
 		Product<&'a Self> +
 		Index<usize, Output = Self::Scalar> +
 		IndexMut<usize, Output = Self::Scalar> +
+		From<Self::BVec> +
 	,
-	Self::Scalar:
+	for <'a> Self::Scalar:
 		'static +
 		Copy +
 		PartialOrd +
 		Add<Self, Output = Self> +
+		Add<&'a Self, Output = Self> +
 		Sub<Self, Output = Self> +
+		Sub<&'a Self, Output = Self> +
 		Mul<Self, Output = Self> +
+		Mul<&'a Self, Output = Self> +
 		Div<Self, Output = Self> +
+		Div<&'a Self, Output = Self> +
 		Rem<Self, Output = Self> +
+		Rem<&'a Self, Output = Self> +
 	,
-	Self::BVecType: GBVec,
+	Self::BVec: GBVec,
+	Self::Axes: Index<usize, Output = Self>,
+	Self::Array: Index<usize, Output = Self::Scalar>,
 {
 	type Scalar;
-	type BVecType;
+	type BVec;
+	type Axes;
+	type Array;
 	const ZERO: Self;
 	const ONE: Self;
 	const MIN: Self;
 	const MAX: Self;
 	const DIM: usize;
 	fn splat(v: Self::Scalar) -> Self;
+	fn map<F: Fn(Self::Scalar) -> Self::Scalar>(self, f: F) -> Self;
+	fn from_array(a: Self::Array) -> Self;
+	fn to_array(&self) -> Self::Array;
 	fn from_slice(slice: &[Self::Scalar]) -> Self;
 	fn write_to_slice(self, slice: &mut [Self::Scalar]);
 	fn dot(self, rhs: Self) -> Self::Scalar;
@@ -189,27 +234,33 @@ where
 	fn max_element(self) -> Self::Scalar;
 	fn element_sum(self) -> Self::Scalar;
 	fn element_product(self) -> Self::Scalar;
-	fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self;
-	fn cmpeq(self, rhs: Self) -> Self::BVecType;
-	fn cmpne(self, rhs: Self) -> Self::BVecType;
-	fn cmpge(self, rhs: Self) -> Self::BVecType;
-	fn cmpgt(self, rhs: Self) -> Self::BVecType;
-	fn cmple(self, rhs: Self) -> Self::BVecType;
-	fn cmplt(self, rhs: Self) -> Self::BVecType;
+	fn select(mask: Self::BVec, if_true: Self, if_false: Self) -> Self;
+	fn cmpeq(self, rhs: Self) -> Self::BVec;
+	fn cmpne(self, rhs: Self) -> Self::BVec;
+	fn cmpge(self, rhs: Self) -> Self::BVec;
+	fn cmpgt(self, rhs: Self) -> Self::BVec;
+	fn cmple(self, rhs: Self) -> Self::BVec;
+	fn cmplt(self, rhs: Self) -> Self::BVec;
 	fn length_squared(self) -> Self::Scalar;
 }
 
 macro_rules! impl_gvec {
 	($type:ty, $scalar:ty, $bvec:ty, $dim:literal) => {
+		impl Sealed for $type {}
 		impl GVec for $type {
 			type Scalar = $scalar;
-			type BVecType = $bvec;
+			type BVec = $bvec;
+			type Axes = [Self; $dim];
+			type Array = [$scalar; $dim];
 			const ZERO: Self = Self::ZERO;
 			const ONE: Self = Self::ONE;
 			const MIN: Self = Self::MIN;
 			const MAX: Self = Self::MAX;
 			const DIM: usize = $dim;
 			fn splat(v: Self::Scalar) -> Self { Self::splat(v) }
+			fn map<F: Fn(Self::Scalar) -> Self::Scalar>(self, f: F) -> Self { self.map(f) }
+			fn from_array(a: Self::Array) -> Self { Self::from_array(a) }
+			fn to_array(&self) -> Self::Array { self.to_array() }
 			fn from_slice(slice: &[Self::Scalar]) -> Self { Self::from_slice(slice) }
 			fn write_to_slice(self, slice: &mut [Self::Scalar]) { self.write_to_slice(slice) }
 			fn dot(self, rhs: Self) -> Self::Scalar { self.dot(rhs) }
@@ -221,13 +272,13 @@ macro_rules! impl_gvec {
 			fn max_element(self) -> Self::Scalar { self.max_element() }
 			fn element_sum(self) -> Self::Scalar { self.element_sum() }
 			fn element_product(self) -> Self::Scalar { self.element_product() }
-			fn select(mask: Self::BVecType, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
-			fn cmpeq(self, rhs: Self) -> Self::BVecType { self.cmpeq(rhs) }
-			fn cmpne(self, rhs: Self) -> Self::BVecType { self.cmpne(rhs) }
-			fn cmpge(self, rhs: Self) -> Self::BVecType { self.cmpge(rhs) }
-			fn cmpgt(self, rhs: Self) -> Self::BVecType { self.cmpgt(rhs) }
-			fn cmple(self, rhs: Self) -> Self::BVecType { self.cmple(rhs) }
-			fn cmplt(self, rhs: Self) -> Self::BVecType { self.cmplt(rhs) }
+			fn select(mask: Self::BVec, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
+			fn cmpeq(self, rhs: Self) -> Self::BVec { self.cmpeq(rhs) }
+			fn cmpne(self, rhs: Self) -> Self::BVec { self.cmpne(rhs) }
+			fn cmpge(self, rhs: Self) -> Self::BVec { self.cmpge(rhs) }
+			fn cmpgt(self, rhs: Self) -> Self::BVec { self.cmpgt(rhs) }
+			fn cmple(self, rhs: Self) -> Self::BVec { self.cmple(rhs) }
+			fn cmplt(self, rhs: Self) -> Self::BVec { self.cmplt(rhs) }
 			fn length_squared(self) -> Self::Scalar { self.length_squared() }
 		}
 	};
@@ -261,176 +312,176 @@ impl_gvec!(DVec3, f64, BVec3, 3);
 impl_gvec!(DVec4, f64, BVec4, 4);
 
 /**
-Generic vector of length 2. Behavior common to all `glam` vectors of length 2 is included in this
-trait.
+Generic vector of length 2.
 */
 pub trait GVec2
 where
 	Self:
-		GVec<BVecType = BVec2> +
-		AsRef<[Self::Scalar; 2]> +
-		AsMut<[Self::Scalar; 2]> +
-		From<[Self::Scalar; 2]> +
-		Into<[Self::Scalar; 2]> +
+		GVec<Axes = [Self; 2]> +
 		From<(Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar)> +
 	,
 {
+	type Extended;
 	const X: Self;
 	const Y: Self;
-	const AXES: [Self; 2];
 	fn x(self) -> Self::Scalar;
 	fn y(self) -> Self::Scalar;
 	fn new(x: Self::Scalar, y: Self::Scalar) -> Self;
-	fn from_array(a: [Self::Scalar; 2]) -> Self;
-	fn to_array(&self) -> [Self::Scalar; 2];
+	fn extend(self, z: Self::Scalar) -> Self::Extended;
+	fn with_x(self, x: Self::Scalar) -> Self;
+	fn with_y(self, y: Self::Scalar) -> Self;
 }
 
 macro_rules! impl_gvec2 {
-	($type:ty) => {
+	($type:ty, $extended:ty) => {
 		impl GVec2 for $type {
+			type Extended = $extended;
 			const X: Self = Self::X;
 			const Y: Self = Self::Y;
-			const AXES: [Self; 2] = Self::AXES;
 			fn x(self) -> Self::Scalar { self.x }
 			fn y(self) -> Self::Scalar { self.y }
 			fn new(x: Self::Scalar, y: Self::Scalar) -> Self { Self::new(x, y) }
-			fn from_array(a: [Self::Scalar; 2]) -> Self { Self::from_array(a) }
-			fn to_array(&self) -> [Self::Scalar; 2] { self.to_array() }
+			fn extend(self, z: Self::Scalar) -> Self::Extended { self.extend(z) }
+			fn with_x(self, x: Self::Scalar) -> Self { self.with_x(x) }
+			fn with_y(self, y: Self::Scalar) -> Self { self.with_y(y) }
 		}
 	};
 }
 pub(crate) use impl_gvec2;
 
-impl_gvec2!(I16Vec2);
-impl_gvec2!(U16Vec2);
-impl_gvec2!(IVec2);
-impl_gvec2!(UVec2);
-impl_gvec2!(I64Vec2);
-impl_gvec2!(U64Vec2);
-impl_gvec2!(Vec2);
-impl_gvec2!(DVec2);
+impl_gvec2!(I16Vec2, I16Vec3);
+impl_gvec2!(U16Vec2, U16Vec3);
+impl_gvec2!(IVec2, IVec3);
+impl_gvec2!(UVec2, UVec3);
+impl_gvec2!(I64Vec2, I64Vec3);
+impl_gvec2!(U64Vec2, U64Vec3);
+impl_gvec2!(Vec2, Vec3);
+impl_gvec2!(DVec2, DVec3);
 
 /**
-Generic vector of length 3. Behavior common to all `glam` vectors of length 3 is included in this
-trait.
+Generic vector of length 3.
 */
 pub trait GVec3
 where
 	Self:
-		GVec +
-		AsRef<[Self::Scalar; 3]> +
-		AsMut<[Self::Scalar; 3]> +
-		From<[Self::Scalar; 3]> +
-		Into<[Self::Scalar; 3]> +
+		GVec<Axes = [Self; 3]> +
 		From<(Self::Scalar, Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar, Self::Scalar)> +
 	,
 {
+	type Extended;
+	type Truncated;
 	const X: Self;
 	const Y: Self;
 	const Z: Self;
-	const AXES: [Self; 3];
 	fn x(self) -> Self::Scalar;
 	fn y(self) -> Self::Scalar;
 	fn z(self) -> Self::Scalar;
 	fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar) -> Self;
-	fn from_array(a: [Self::Scalar; 3]) -> Self;
-	fn to_array(&self) -> [Self::Scalar; 3];
+	fn extend(self, w: Self::Scalar) -> Self::Extended;
+	fn truncate(self) -> Self::Truncated;
+	fn with_x(self, x: Self::Scalar) -> Self;
+	fn with_y(self, y: Self::Scalar) -> Self;
+	fn with_z(self, z: Self::Scalar) -> Self;
 	fn cross(self, rhs: Self) -> Self;
 }
 
 macro_rules! impl_gvec3 {
-	($type:ty) => {
+	($type:ty, $extended:ty, $truncated: ty) => {
 		impl GVec3 for $type {
+			type Extended = $extended;
+			type Truncated = $truncated;
 			const X: Self = Self::X;
 			const Y: Self = Self::Y;
 			const Z: Self = Self::Z;
-			const AXES: [Self; 3] = Self::AXES;
 			fn x(self) -> Self::Scalar { self.x }
 			fn y(self) -> Self::Scalar { self.y }
 			fn z(self) -> Self::Scalar { self.z }
 			fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar) -> Self { Self::new(x, y, z) }
-			fn from_array(a: [Self::Scalar; 3]) -> Self { Self::from_array(a) }
-			fn to_array(&self) -> [Self::Scalar; 3] { self.to_array() }
+			fn extend(self, w: Self::Scalar) -> Self::Extended { self.extend(w) }
+			fn truncate(self) -> Self::Truncated { self.truncate() }
+			fn with_x(self, x: Self::Scalar) -> Self { self.with_x(x) }
+			fn with_y(self, y: Self::Scalar) -> Self { self.with_y(y) }
+			fn with_z(self, z: Self::Scalar) -> Self { self.with_z(z) }
 			fn cross(self, rhs: Self) -> Self { self.cross(rhs) }
 		}
 	};
 }
 pub(crate) use impl_gvec3;
 
-impl_gvec3!(I16Vec3);
-impl_gvec3!(U16Vec3);
-impl_gvec3!(IVec3);
-impl_gvec3!(UVec3);
-impl_gvec3!(I64Vec3);
-impl_gvec3!(U64Vec3);
-impl_gvec3!(Vec3);
-impl_gvec3!(Vec3A);
-impl_gvec3!(DVec3);
+impl_gvec3!(I16Vec3, I16Vec4, I16Vec2);
+impl_gvec3!(U16Vec3, U16Vec4, U16Vec2);
+impl_gvec3!(IVec3, IVec4, IVec2);
+impl_gvec3!(UVec3, UVec4, UVec2);
+impl_gvec3!(I64Vec3, I64Vec4, I64Vec2);
+impl_gvec3!(U64Vec3, U64Vec4, U64Vec2);
+impl_gvec3!(Vec3, Vec4, Vec2);
+impl_gvec3!(Vec3A, Vec4, Vec2);
+impl_gvec3!(DVec3, DVec4, DVec2);
 
 /**
-Generic vector of length 4. Behavior common to all `glam` vectors of length 4 is included in this
-trait.
+Generic vector of length 4.
 */
 pub trait GVec4
 where
 	Self:
-		GVec +
-		AsRef<[Self::Scalar; 4]> +
-		AsMut<[Self::Scalar; 4]> +
-		From<[Self::Scalar; 4]> +
-		Into<[Self::Scalar; 4]> +
+		GVec<Axes = [Self; 4]> +
 		From<(Self::Scalar, Self::Scalar, Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar, Self::Scalar, Self::Scalar)> +
 	,
 {
+	type Truncated;
 	const X: Self;
 	const Y: Self;
 	const Z: Self;
 	const W: Self;
-	const AXES: [Self; 4];
 	fn x(self) -> Self::Scalar;
 	fn y(self) -> Self::Scalar;
 	fn z(self) -> Self::Scalar;
 	fn w(self) -> Self::Scalar;
 	fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar, w: Self::Scalar) -> Self;
-	fn from_array(a: [Self::Scalar; 4]) -> Self;
-	fn to_array(&self) -> [Self::Scalar; 4];
+	fn truncate(self) -> Self::Truncated;
+	fn with_x(self, x: Self::Scalar) -> Self;
+	fn with_y(self, y: Self::Scalar) -> Self;
+	fn with_z(self, z: Self::Scalar) -> Self;
+	fn with_w(self, w: Self::Scalar) -> Self;
 }
 
 macro_rules! impl_gvec4 {
-	($type:ty) => {
+	($type:ty, $truncated:ty) => {
 		impl GVec4 for $type {
+			type Truncated = $truncated;
 			const X: Self = Self::X;
 			const Y: Self = Self::Y;
 			const Z: Self = Self::Z;
 			const W: Self = Self::W;
-			const AXES: [Self; 4] = Self::AXES;
 			fn x(self) -> Self::Scalar { self.x }
 			fn y(self) -> Self::Scalar { self.y }
 			fn z(self) -> Self::Scalar { self.z }
 			fn w(self) -> Self::Scalar { self.w }
 			fn new(x: Self::Scalar, y: Self::Scalar, z: Self::Scalar, w: Self::Scalar) -> Self { Self::new(x, y, z, w) }
-			fn from_array(a: [Self::Scalar; 4]) -> Self { Self::from_array(a) }
-			fn to_array(&self) -> [Self::Scalar; 4] { self.to_array() }
+			fn truncate(self) -> Self::Truncated { self.truncate() }
+			fn with_x(self, x: Self::Scalar) -> Self { self.with_x(x) }
+			fn with_y(self, y: Self::Scalar) -> Self { self.with_y(y) }
+			fn with_z(self, z: Self::Scalar) -> Self { self.with_z(z) }
+			fn with_w(self, w: Self::Scalar) -> Self { self.with_w(w) }
 		}
 	};
 }
 pub(crate) use impl_gvec4;
 
-impl_gvec4!(I16Vec4);
-impl_gvec4!(U16Vec4);
-impl_gvec4!(IVec4);
-impl_gvec4!(UVec4);
-impl_gvec4!(I64Vec4);
-impl_gvec4!(U64Vec4);
-impl_gvec4!(Vec4);
-impl_gvec4!(DVec4);
+impl_gvec4!(I16Vec4, I16Vec3);
+impl_gvec4!(U16Vec4, U16Vec3);
+impl_gvec4!(IVec4, IVec3);
+impl_gvec4!(UVec4, UVec3);
+impl_gvec4!(I64Vec4, I64Vec3);
+impl_gvec4!(U64Vec4, U64Vec3);
+impl_gvec4!(Vec4, Vec3);
+impl_gvec4!(DVec4, DVec3);
 
 /**
-Vector of any length whose elements are a signed type. Behavior common to all `glam` vectors of
-signed types is included in this trait.
+Vector of any length whose elements are a signed type.
 */
 pub trait SignedVec: GVec + Neg {
 	const NEG_ONE: Self;
@@ -475,8 +526,7 @@ impl_signedvec!(DVec3);
 impl_signedvec!(DVec4);
 
 /**
-Vector of length 2 whose elements are a signed type. Behavior common to all `glam` vectors of
-length 2 of signed types is included in this trait.
+Vector of length 2 whose elements are a signed type.
 */
 pub trait SignedVec2: SignedVec + GVec2 {
 	const NEG_X: Self;
@@ -506,8 +556,7 @@ impl_signedvec2!(Vec2);
 impl_signedvec2!(DVec2);
 
 /**
-Vector of length 3 whose elements are a signed type. Behavior common to all `glam` vectors of
-length 3 of signed types is included in this trait.
+Vector of length 3 whose elements are a signed type.
 */
 pub trait SignedVec3: SignedVec + GVec3 {
 	const NEG_X: Self;
@@ -534,8 +583,7 @@ impl_signedvec3!(Vec3A);
 impl_signedvec3!(DVec3);
 
 /**
-Vector of length 4 whose elements are a signed type. Behavior common to all `glam` vectors of
-length 4 of signed types is included in this trait.
+Vector of length 4 whose elements are a signed type.
 */
 pub trait SignedVec4: SignedVec + GVec4 {
 	const NEG_X: Self;
@@ -563,8 +611,7 @@ impl_signedvec4!(Vec4);
 impl_signedvec4!(DVec4);
 
 /**
-Vector of any length whose elements are a floating-point type. Behavior common to all `glam`
-vectors of floating-point types is included in this trait.
+Vector of any length whose elements are a floating-point type.
 */
 pub trait FloatVec: SignedVec {
 	const NAN: Self;
@@ -572,13 +619,15 @@ pub trait FloatVec: SignedVec {
 	const NEG_INFINITY: Self;
 	fn copysign(self, rhs: Self) -> Self;
 	fn is_finite(self) -> bool;
+	fn is_finite_mask(self) -> Self::BVec;
 	fn is_nan(self) -> bool;
-	fn is_nan_mask(self) -> Self::BVecType;
+	fn is_nan_mask(self) -> Self::BVec;
 	fn length(self) -> Self::Scalar;
 	fn length_recip(self) -> Self::Scalar;
 	fn distance(self, rhs: Self) -> Self::Scalar;
 	fn normalize(self) -> Self;
 	fn try_normalize(self) -> Option<Self>;
+	fn normalize_or(self, fallback: Self) -> Self;
 	fn normalize_or_zero(self) -> Self;
 	fn is_normalized(self) -> bool;
 	fn project_onto(self, rhs: Self) -> Self;
@@ -590,15 +639,20 @@ pub trait FloatVec: SignedVec {
 	fn ceil(self) -> Self;
 	fn trunc(self) -> Self;
 	fn fract(self) -> Self;
+	fn fract_gl(self) -> Self;
 	fn exp(self) -> Self;
 	fn powf(self, n: Self::Scalar) -> Self;
 	fn recip(self) -> Self;
 	fn lerp(self, rhs: Self, s: Self::Scalar) -> Self;
+	fn move_towards(&self, rhs: Self, d: Self::Scalar) -> Self;
+	fn midpoint(self, rhs: Self) -> Self;
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool;
 	fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self;
 	fn clamp_length_max(self, max: Self::Scalar) -> Self;
 	fn clamp_length_min(self, min: Self::Scalar) -> Self;
 	fn mul_add(self, a: Self, b: Self) -> Self;
+	fn reflect(self, normal: Self) -> Self;
+	fn refract(self, normal: Self, eta: Self::Scalar) -> Self;
 }
 
 macro_rules! impl_floatvec {
@@ -609,13 +663,15 @@ macro_rules! impl_floatvec {
 			const NEG_INFINITY: Self = Self::NEG_INFINITY;
 			fn copysign(self, rhs: Self) -> Self { self.copysign(rhs) }
 			fn is_finite(self) -> bool { self.is_finite() }
+			fn is_finite_mask(self) -> Self::BVec { self.is_finite_mask() }
 			fn is_nan(self) -> bool { self.is_nan() }
-			fn is_nan_mask(self) -> Self::BVecType { self.is_nan_mask() }
+			fn is_nan_mask(self) -> Self::BVec { self.is_nan_mask() }
 			fn length(self) -> Self::Scalar { self.length() }
 			fn length_recip(self) -> Self::Scalar { self.length_recip() }
 			fn distance(self, rhs: Self) -> Self::Scalar { self.distance(rhs) }
 			fn normalize(self) -> Self { self.normalize() }
 			fn try_normalize(self) -> Option<Self> { self.try_normalize() }
+			fn normalize_or(self, fallback: Self) -> Self { self.normalize_or(fallback) }
 			fn normalize_or_zero(self) -> Self { self.normalize_or_zero() }
 			fn is_normalized(self) -> bool { self.is_normalized() }
 			fn project_onto(self, rhs: Self) -> Self { self.project_onto(rhs) }
@@ -627,15 +683,20 @@ macro_rules! impl_floatvec {
 			fn ceil(self) -> Self { self.ceil() }
 			fn trunc(self) -> Self { self.trunc() }
 			fn fract(self) -> Self { self.fract() }
+			fn fract_gl(self) -> Self { self.fract_gl() }
 			fn exp(self) -> Self { self.exp() }
 			fn powf(self, n: Self::Scalar) -> Self { self.powf(n) }
 			fn recip(self) -> Self { self.recip() }
 			fn lerp(self, rhs: Self, s: Self::Scalar) -> Self { self.lerp(rhs, s) }
+			fn move_towards(&self, rhs: Self, d: Self::Scalar) -> Self { self.move_towards(rhs, d) }
+			fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 			fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 			fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self { self.clamp_length(min, max) }
 			fn clamp_length_max(self, max: Self::Scalar) -> Self { self.clamp_length_max(max) }
 			fn clamp_length_min(self, min: Self::Scalar) -> Self { self.clamp_length_min(min) }
 			fn mul_add(self, a: Self, b: Self) -> Self { self.mul_add(a, b) }
+			fn reflect(self, normal: Self) -> Self { self.reflect(normal) }
+			fn refract(self, normal: Self, eta: Self::Scalar) -> Self { self.refract(normal, eta) }
 		}
 	};
 }
@@ -649,21 +710,22 @@ impl_floatvec!(DVec3);
 impl_floatvec!(DVec4);
 
 /**
-Vector of length 2 whose elements are a floating-point type. Behavior common to all `glam` vectors
-of length 2 of floating-point types is included in this trait.
+Vector of length 2 whose elements are a floating-point type.
 */
 pub trait FloatVec2: FloatVec + SignedVec2 {
 	fn angle_between(self, rhs: Self) -> Self::Scalar;
 	fn from_angle(angle: Self::Scalar) -> Self;
 	fn to_angle(self) -> Self::Scalar;
+	fn rotate_towards(&self, rhs: Self, max_angle: Self::Scalar) -> Self;
 }
 
 macro_rules! impl_floatvec2 {
 	($type:ty) => {
 		impl FloatVec2 for $type {
-			fn angle_between(self, rhs: Self) -> Self::Scalar { self.angle_between(rhs) }
+			fn angle_between(self, rhs: Self) -> Self::Scalar { self.angle_to(rhs) }
 			fn from_angle(angle: Self::Scalar) -> Self { Self::from_angle(angle) }
 			fn to_angle(self) -> Self::Scalar { self.to_angle() }
+			fn rotate_towards(&self, rhs: Self, max_angle: Self::Scalar) -> Self { self.rotate_towards(rhs, max_angle) }
 		}
 	};
 }
@@ -672,8 +734,7 @@ impl_floatvec2!(Vec2);
 impl_floatvec2!(DVec2);
 
 /**
-Vector of length 3 whose elements are a floating-point type. Behavior common to all `glam` vectors
-of length 3 of floating-point types is included in this trait.
+Vector of length 3 whose elements are a floating-point type.
 */
 pub trait FloatVec3: FloatVec + SignedVec3 {
 	fn angle_between(self, rhs: Self) -> Self::Scalar;
@@ -698,8 +759,7 @@ impl_floatvec3!(Vec3A);
 impl_floatvec3!(DVec3);
 
 /**
-Vector of length 4 whose elements are a floating-point type. This is a marker trait as there is no
-behavior specific to `glam` vectors of length 4 of floating-point types.
+Vector of length 4 whose elements are a floating-point type.
 */
 pub trait FloatVec4: FloatVec + SignedVec4 {}
 
@@ -707,8 +767,7 @@ impl FloatVec4 for Vec4 {}
 impl FloatVec4 for DVec4 {}
 
 /**
-Vector of any length whose elements are an integer type. Behavior common to all `glam` vectors of
-integer types is included in this trait.
+Vector of any length whose elements are an integer type.
 */
 pub trait IntVec
 where
@@ -786,8 +845,7 @@ impl_intvec!(U64Vec3);
 impl_intvec!(U64Vec4);
 
 /**
-Vector of length 2 whose elements are an integer type. Behavior common to all `glam` vectors
-of length 2 of integer types is included in this trait.
+Vector of length 2 whose elements are an integer type.
 */
 pub trait IntVec2
 where
@@ -809,14 +867,13 @@ impl IntVec2 for I64Vec2 {}
 impl IntVec2 for U64Vec2 {}
 
 /**
-Vector of length 3 whose elements are an integer type. Behavior common to all `glam` vectors
-of length 3 of integer types is included in this trait.
+Vector of length 3 whose elements are an integer type.
 */
 pub trait IntVec3
 where
 	Self:
 		IntVec +
-		GVec3<BVecType = BVec3> +
+		GVec3<BVec = BVec3> +
 		Shl<IVec3, Output = Self> +
 		Shr<IVec3, Output = Self> +
 		Shl<UVec3, Output = Self> +
@@ -833,14 +890,13 @@ impl IntVec3 for U64Vec3 {}
 
 
 /**
-Vector of length 4 whose elements are an integer type. Behavior common to all `glam` vectors
-of length 4 of integer types is included in this trait.
+Vector of length 4 whose elements are an integer type.
 */
 pub trait IntVec4
 where
 	Self:
 		IntVec +
-		GVec4<BVecType = BVec4> +
+		GVec4<BVec = BVec4> +
 		Shl<IVec4, Output = Self> +
 		Shr<IVec4, Output = Self> +
 		Shl<UVec4, Output = Self> +
@@ -856,8 +912,7 @@ impl IntVec4 for I64Vec4 {}
 impl IntVec4 for U64Vec4 {}
 
 /**
-Vector of any length whose elements are a signed integer type. This is a marker trait as there is
-no behavior specific to `glam` vectors of signed integer types.
+Vector of any length whose elements are a signed integer type.
 */
 pub trait SIntVec: IntVec + SignedVec {}
 
@@ -872,8 +927,7 @@ impl SIntVec for I64Vec3 {}
 impl SIntVec for I64Vec4 {}
 
 /**
-Vector of length 2 whose elements are a signed integer type. This is a marker trait as there is no
-behavior specific to `glam` vectors of length 2 of signed integer types.
+Vector of length 2 whose elements are a signed integer type.
 */
 pub trait SIntVec2: SIntVec + IntVec2 {}
 
@@ -882,8 +936,7 @@ impl SIntVec2 for IVec2 {}
 impl SIntVec2 for I64Vec2 {}
 
 /**
-Vector of length 3 whose elements are a signed integer type. This is a marker trait as there is no
-behavior specific to `glam` vectors of length 3 of signed integer types.
+Vector of length 3 whose elements are a signed integer type.
 */
 pub trait SIntVec3: SIntVec + IntVec3 {}
 
@@ -892,8 +945,7 @@ impl SIntVec3 for IVec3 {}
 impl SIntVec3 for I64Vec3 {}
 
 /**
-Vector of length 4 whose elements are a signed integer type. This is a marker trait as there is no
-behavior specific to `glam` vectors of length 4 of signed integer types.
+Vector of length 4 whose elements are a signed integer type.
 */
 pub trait SIntVec4: SIntVec + IntVec4 {}
 
@@ -902,8 +954,7 @@ impl SIntVec4 for IVec4 {}
 impl SIntVec4 for I64Vec4 {}
 
 /**
-Vector of any length whose elements are an unsigned integer type. This is a marker trait as there
-is no behavior specific to `glam` vectors of unsigned integer types.
+Vector of any length whose elements are an unsigned integer type.
 */
 pub trait UIntVec: IntVec {}
 
@@ -918,8 +969,7 @@ impl UIntVec for U64Vec3 {}
 impl UIntVec for U64Vec4 {}
 
 /**
-Vector of length 2 whose elements are an unsigned integer type. This is a marker trait as there is
-no behavior specific to `glam` vectors of length 2 of unsigned integer types.
+Vector of length 2 whose elements are an unsigned integer type.
 */
 pub trait UIntVec2: UIntVec + IntVec2 {}
 
@@ -928,8 +978,7 @@ impl UIntVec2 for UVec2 {}
 impl UIntVec2 for U64Vec2 {}
 
 /**
-Vector of length 3 whose elements are an unsigned integer type. This is a marker trait as there is
-no behavior specific to `glam` vectors of length 3 of unsigned integer types.
+Vector of length 3 whose elements are an unsigned integer type.
 */
 pub trait UIntVec3: UIntVec + IntVec3 {}
 
@@ -938,8 +987,7 @@ impl UIntVec3 for UVec3 {}
 impl UIntVec3 for U64Vec3 {}
 
 /**
-Vector of length 4 whose elements are an unsigned integer type. This is a marker trait as there is
-no behavior specific to `glam` vectors of length 4 of unsigned integer types.
+Vector of length 4 whose elements are an unsigned integer type.
 */
 pub trait UIntVec4: UIntVec + IntVec4 {}
 
@@ -948,8 +996,7 @@ impl UIntVec4 for UVec4 {}
 impl UIntVec4 for U64Vec4 {}
 
 /**
-Vector of any length whose elements are [`i16`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`i16`].
+Vector of any length whose elements are [`i16`].
 */
 pub trait I16Vec: SIntVec<Scalar = i16> {}
 
@@ -958,8 +1005,7 @@ impl I16Vec for I16Vec3 {}
 impl I16Vec for I16Vec4 {}
 
 /**
-Vector of any length whose elements are [`u16`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`u16`].
+Vector of any length whose elements are [`u16`].
 */
 pub trait U16Vec: UIntVec<Scalar = u16> {}
 
@@ -968,8 +1014,7 @@ impl U16Vec for U16Vec3 {}
 impl U16Vec for U16Vec4 {}
 
 /**
-Vector of any length whose elements are [`i32`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`i32`].
+Vector of any length whose elements are [`i32`].
 */
 pub trait I32Vec: SIntVec<Scalar = i32> {}
 
@@ -978,8 +1023,7 @@ impl I32Vec for IVec3 {}
 impl I32Vec for IVec4 {}
 
 /**
-Vector of any length whose elements are [`u32`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`u32`].
+Vector of any length whose elements are [`u32`].
 */
 pub trait U32Vec: UIntVec<Scalar = u32> {}
 
@@ -988,8 +1032,7 @@ impl U32Vec for UVec3 {}
 impl U32Vec for UVec4 {}
 
 /**
-Vector of any length whose elements are [`i64`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`i64`].
+Vector of any length whose elements are [`i64`].
 */
 pub trait I64Vec: SIntVec<Scalar = i64> {}
 
@@ -998,8 +1041,7 @@ impl I64Vec for I64Vec3 {}
 impl I64Vec for I64Vec4 {}
 
 /**
-Vector of any length whose elements are [`u64`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`u64`].
+Vector of any length whose elements are [`u64`].
 */
 pub trait U64Vec: UIntVec<Scalar = u64> {}
 
@@ -1008,8 +1050,7 @@ impl U64Vec for U64Vec3 {}
 impl U64Vec for U64Vec4 {}
 
 /**
-Vector of any length whose elements are [`f32`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`f32`].
+Vector of any length whose elements are [`f32`].
 */
 pub trait F32Vec: FloatVec<Scalar = f32> {}
 
@@ -1019,8 +1060,7 @@ impl F32Vec for Vec3A {}
 impl F32Vec for Vec4 {}
 
 /**
-Vector of any length whose elements are [`f64`]. This is a marker trait as there is no behavior
-specific to `glam` vectors of [`f64`].
+Vector of any length whose elements are [`f64`].
 */
 pub trait F64Vec: FloatVec<Scalar = f64> {}
 

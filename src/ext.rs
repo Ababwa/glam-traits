@@ -2,36 +2,11 @@
 This module provides extensions to [glam](https://docs.rs/glam).
 
 Including:
-* 8-bit integer vectors
+* 8-bit integer vectors.
+* Extension traits to add 8-bit `as_` functions to [glam] vecs.
 * A generalized vector `select()` function.
 */
 
-use std::{
-	fmt::{Debug, Display},
-	iter::{Product, Sum},
-	ops::{
-		Add, AddAssign,
-		Sub, SubAssign,
-		Mul, MulAssign,
-		Div, DivAssign,
-		Rem, RemAssign,
-		BitAnd, BitOr, BitXor,
-		Index, IndexMut,
-		Neg, Not,
-		Shl, Shr,
-	},
-};
-use glam::{
-	BVec2, BVec3, BVec4,
-	I16Vec2, I16Vec3, I16Vec4,
-	U16Vec2, U16Vec3, U16Vec4,
-	IVec2, IVec3, IVec4,
-	UVec2, UVec3, UVec4,
-	I64Vec2, I64Vec3, I64Vec4,
-	U64Vec2, U64Vec3, U64Vec4,
-	Vec2, Vec3, Vec4,
-	DVec2, DVec3, DVec4,
-};
 use num_traits::AsPrimitive;
 use crate::*;
 
@@ -89,18 +64,18 @@ macro_rules! impl_gen_bin_op {
 		}
 	};
 }
+macro_rules! impl_assign {
+	($trait:ident, $fn:ident, $gen:ty, $type:ident, $($symbol:ident),*) => {
+		impl $trait<$gen> for $type {
+			fn $fn(&mut self, rhs: $gen) { $(self.$symbol.$fn(rhs.$symbol);)* }
+		}
+	};
+}
 macro_rules! impl_bin_op_scalar {
 	($trait:ident, $fn:ident, $scalar:ty, $type:ident, $($symbol:ident),*) => {
 		impl $trait<$scalar> for $type {
 			type Output = Self;
 			fn $fn(self, rhs: $scalar) -> Self { Self { $($symbol: self.$symbol.$fn(rhs),)* } }
-		}
-	};
-}
-macro_rules! impl_assign {
-	($trait:ident, $fn:ident, $type:ident, $($symbol:ident),*) => {
-		impl $trait<$type> for $type {
-			fn $fn(&mut self, rhs: Self) { $(self.$symbol.$fn(rhs.$symbol);)* }
 		}
 	};
 }
@@ -112,10 +87,10 @@ macro_rules! impl_assign_scalar {
 	};
 }
 macro_rules! impl_scalar_bin_op {
-	($trait:ident, $fn:ident, $scalar:ty, $type:ident, $($symbol:ident),*) => {
-		impl $trait<$type> for $scalar {
+	($trait:ident, $fn:ident, $scalar:ty, $gen:ty, $type:ident, $($symbol:ident),*) => {
+		impl $trait<$gen> for $scalar {
 			type Output = $type;
-			fn $fn(self, rhs: $type) -> $type { $type { $($symbol: self.$fn(rhs.$symbol),)* } }
+			fn $fn(self, rhs: $gen) -> $type { $type { $($symbol: self.$fn(rhs.$symbol),)* } }
 		}
 	};
 }
@@ -125,10 +100,15 @@ macro_rules! bin_op_impls {
 		$($symbol:ident),*
 	) => {
 		impl_gen_bin_op!($bin, $bin_fn, $type, $type, $($symbol),*);
-		impl_assign!($assign, $assign_fn, $type, $($symbol),*);
+		impl_gen_bin_op!($bin, $bin_fn, &$type, $type, $($symbol),*);
+		impl_assign!($assign, $assign_fn, $type, $type, $($symbol),*);
+		impl_assign!($assign, $assign_fn, &$type, $type, $($symbol),*);
 		impl_bin_op_scalar!($bin, $bin_fn, $scalar, $type, $($symbol),*);
+		impl_bin_op_scalar!($bin, $bin_fn, &$scalar, $type, $($symbol),*);
 		impl_assign_scalar!($assign, $assign_fn, $scalar, $type, $($symbol),*);
-		impl_scalar_bin_op!($bin, $bin_fn, $scalar, $type, $($symbol),*);
+		impl_assign_scalar!($assign, $assign_fn, &$scalar, $type, $($symbol),*);
+		impl_scalar_bin_op!($bin, $bin_fn, $scalar, $type, $type, $($symbol),*);
+		impl_scalar_bin_op!($bin, $bin_fn, $scalar, &$type, $type, $($symbol),*);
 	};
 }
 macro_rules! impl_acc {
@@ -261,11 +241,15 @@ macro_rules! decl_vec {
 		$fn:ident, $type:ident, $bvec:ty, $scalar:ty, $dim:tt, $signed:ident,
 		($($extended:ty)?), ($($truncated:ty)?),
 		$b8_fn:ident, $b8_type:ty, $b8_scalar:ty,
-		$i16_fn:ident, $i16_type:ty, $u16_fn:ident, $u16_type:ty,
-		$i32_fn:ident, $i32_type:ty, $u32_fn:ident, $u32_type:ty,
-		$i64_fn:ident, $i64_type:ty, $u64_fn:ident, $u64_type:ty,
-		$f32_fn:ident, $f32_type:ty, $f64_fn:ident, $f64_type:ty,
-		$(($ord:expr, $symbol:ident, $capital:ident, $neg_cap:ident, ($($axis:expr),*)),)*
+		$i16_fn:ident, $i16_type:ty,
+		$u16_fn:ident, $u16_type:ty,
+		$i32_fn:ident, $i32_type:ty,
+		$u32_fn:ident, $u32_type:ty,
+		$i64_fn:ident, $i64_type:ty,
+		$u64_fn:ident, $u64_type:ty,
+		$f32_fn:ident, $f32_type:ty,
+		$f64_fn:ident, $f64_type:ty,
+		$(($ord:expr, $symbol:ident, $capital:ident, $neg_cap:ident, $with_fn:ident, ($($axis:expr),*)),)*
 	) => {
 		pub const fn $fn($($symbol: $scalar),*) -> $type { $type::new($($symbol),*) }
 		#[derive(Clone, Copy, PartialEq, Eq)]
@@ -279,10 +263,9 @@ macro_rules! decl_vec {
 			pub const AXES: [Self; $dim] = [$(Self::$capital),*];
 			pub const fn new($($symbol: $scalar),*) -> Self { Self { $($symbol),* } }
 			pub const fn splat(v: $scalar) -> Self { Self { $($symbol: v),* } }
+			pub fn map<F: Fn($scalar) -> $scalar>(self, f: F) -> Self { Self::new($(f(self.$symbol)),*) }
 			pub fn select(mask: $bvec, if_true: Self, if_false: Self) -> Self {
-				Self {
-					$($symbol: if mask.test($ord) { if_true.$symbol } else { if_false.$symbol },)*
-				}
+				Self { $($symbol: if mask.test($ord) { if_true.$symbol } else { if_false.$symbol },)* }
 			}
 			pub const fn from_array(a: [$scalar; $dim]) -> Self { Self::new($(a[$ord]),*) }
 			pub const fn to_array(&self) -> [$scalar; $dim] { [$(self.$symbol),*] }
@@ -290,14 +273,16 @@ macro_rules! decl_vec {
 			pub fn write_to_slice(self, slice: &mut [$scalar]) { $(slice[$ord] = self.$symbol;)* }
 			extended!(($($extended)?), $scalar, $($symbol),*);
 			truncated!(($($truncated)?), $scalar, $($symbol),*);
+			$(
+				pub fn $with_fn(mut self, $symbol: $scalar) -> Self {
+					self.$symbol = $symbol;
+					self
+				}
+			)*
 			pub fn dot(self, rhs: Self) -> $scalar { sep!($((self.$symbol * rhs.$symbol)),*; +) }
 			pub fn dot_into_vec(self, rhs: Self) -> Self { Self::splat(self.dot(rhs)) }
-			pub fn min(self, rhs: Self) -> Self {
-				Self { $($symbol: self.$symbol.min(rhs.$symbol),)* }
-			}
-			pub fn max(self, rhs: Self) -> Self {
-				Self { $($symbol: self.$symbol.max(rhs.$symbol),)* }
-			}
+			pub fn min(self, rhs: Self) -> Self { Self { $($symbol: self.$symbol.min(rhs.$symbol),)* } }
+			pub fn max(self, rhs: Self) -> Self { Self { $($symbol: self.$symbol.max(rhs.$symbol),)* } }
 			pub fn clamp(self, min: Self, max: Self) -> Self { self.max(min).min(max) }
 			pub fn min_element(self) -> $scalar { nest!(min $(, self.$symbol)*) }
 			pub fn max_element(self) -> $scalar { nest!(max $(, self.$symbol)*) }
@@ -389,9 +374,7 @@ macro_rules! decl_vec {
 			fn from(v: $type) -> Self { [$(v.$symbol),*] }
 		}
 		impl From<($(omit!($symbol, $scalar)),*)> for $type {
-			fn from(($($symbol),*): ($(omit!($symbol, $scalar)),*)) -> Self {
-				Self::new($($symbol),*)
-			}
+			fn from(($($symbol),*): ($(omit!($symbol, $scalar)),*)) -> Self { Self::new($($symbol),*) }
 		}
 		impl From<$type> for ($(omit!($symbol, $scalar)),*) {
 			fn from(v: $type) -> Self { ($(v.$symbol),*) }
@@ -404,68 +387,87 @@ macro_rules! decl_vec {
 		impl_try_from!($u32_type, $type, $scalar, $($symbol),*);
 		impl_try_from!($i64_type, $type, $scalar, $($symbol),*);
 		impl_try_from!($u64_type, $type, $scalar, $($symbol),*);
+		impl From<$bvec> for $type {
+			fn from(v: $bvec) -> Self { Self::new($(<$scalar>::from(v.$symbol)),*) }
+		}
 	};
 }
 
 decl_vec!(
 	u8vec2, U8Vec2, BVec2, u8, 2, false, (U8Vec3), (), as_i8vec2, I8Vec2, i8,
-	as_i16vec2, I16Vec2, as_u16vec2, U16Vec2,
-	as_ivec2, IVec2, as_uvec2, UVec2,
-	as_i64vec2, I64Vec2, as_u64vec2, U64Vec2,
-	as_vec2, Vec2, as_f64vec2, DVec2,
-	(0, x, X, NEG_X, (1, 0)),
-	(1, y, Y, NEG_Y, (0, 1)),
+	as_i16vec2, I16Vec2,
+	as_u16vec2, U16Vec2,
+	as_ivec2, IVec2,
+	as_uvec2, UVec2,
+	as_i64vec2, I64Vec2,
+	as_u64vec2, U64Vec2,
+	as_vec2, Vec2,
+	as_f64vec2, DVec2,
+	(0, x, X, NEG_X, with_x, (1, 0)),
+	(1, y, Y, NEG_Y, with_y, (0, 1)),
 );
 impl_gvec!(U8Vec2, u8, BVec2, 2);
-impl_gvec2!(U8Vec2);
+impl_gvec2!(U8Vec2, U8Vec3);
 impl_intvec!(U8Vec2);
 impl IntVec2 for U8Vec2 {}
 impl UIntVec for U8Vec2 {}
 impl UIntVec2 for U8Vec2 {}
 decl_vec!(
 	u8vec3, U8Vec3, BVec3, u8, 3, false, (U8Vec4), (U8Vec2), as_i8vec3, I8Vec3, i8,
-	as_i16vec3, I16Vec3, as_u16vec3, U16Vec3,
-	as_ivec3, IVec3, as_uvec3, UVec3,
-	as_i64vec3, I64Vec3, as_u64vec3, U64Vec3,
-	as_vec3, Vec3, as_f64vec3, DVec3,
-	(0, x, X, NEG_X, (1, 0, 0)),
-	(1, y, Y, NEG_Y, (0, 1, 0)),
-	(2, z, Z, NEG_Z, (0, 0, 1)),
+	as_i16vec3, I16Vec3,
+	as_u16vec3, U16Vec3,
+	as_ivec3, IVec3,
+	as_uvec3, UVec3,
+	as_i64vec3, I64Vec3,
+	as_u64vec3, U64Vec3,
+	as_vec3, Vec3,
+	as_f64vec3, DVec3,
+	(0, x, X, NEG_X, with_x, (1, 0, 0)),
+	(1, y, Y, NEG_Y, with_y, (0, 1, 0)),
+	(2, z, Z, NEG_Z, with_z, (0, 0, 1)),
 );
 impl_gvec!(U8Vec3, u8, BVec3, 3);
-impl_gvec3!(U8Vec3);
+impl_gvec3!(U8Vec3, U8Vec4, U8Vec2);
 impl_intvec!(U8Vec3);
 impl IntVec3 for U8Vec3 {}
 impl UIntVec for U8Vec3 {}
 impl UIntVec3 for U8Vec3 {}
 decl_vec!(
 	u8vec4, U8Vec4, BVec4, u8, 4, false, (), (U8Vec3), as_i8vec4, I8Vec4, i8,
-	as_i16vec4, I16Vec4, as_u16vec4, U16Vec4,
-	as_ivec4, IVec4, as_uvec4, UVec4,
-	as_i64vec4, I64Vec4, as_u64vec4, U64Vec4,
-	as_vec4, Vec4, as_f64vec4, DVec4,
-	(0, x, X, NEG_X, (1, 0, 0, 0)),
-	(1, y, Y, NEG_Y, (0, 1, 0, 0)),
-	(2, z, Z, NEG_Z, (0, 0, 1, 0)),
-	(3, w, W, NEG_W, (0, 0, 0, 1)),
+	as_i16vec4, I16Vec4,
+	as_u16vec4, U16Vec4,
+	as_ivec4, IVec4,
+	as_uvec4, UVec4,
+	as_i64vec4, I64Vec4,
+	as_u64vec4, U64Vec4,
+	as_vec4, Vec4,
+	as_f64vec4, DVec4,
+	(0, x, X, NEG_X, with_x, (1, 0, 0, 0)),
+	(1, y, Y, NEG_Y, with_y, (0, 1, 0, 0)),
+	(2, z, Z, NEG_Z, with_z, (0, 0, 1, 0)),
+	(3, w, W, NEG_W, with_w, (0, 0, 0, 1)),
 );
 impl_gvec!(U8Vec4, u8, BVec4, 4);
-impl_gvec4!(U8Vec4);
+impl_gvec4!(U8Vec4, U8Vec3);
 impl_intvec!(U8Vec4);
 impl IntVec4 for U8Vec4 {}
 impl UIntVec for U8Vec4 {}
 impl UIntVec4 for U8Vec4 {}
 decl_vec!(
 	i8vec2, I8Vec2, BVec2, i8, 2, true, (I8Vec3), (), as_u8vec2, U8Vec2, u8,
-	as_i16vec2, I16Vec2, as_u16vec2, U16Vec2,
-	as_ivec2, IVec2, as_uvec2, UVec2,
-	as_i64vec2, I64Vec2, as_u64vec2, U64Vec2,
-	as_vec2, Vec2, as_f64vec2, DVec2,
-	(0, x, X, NEG_X, (1, 0)),
-	(1, y, Y, NEG_Y, (0, 1)),
+	as_i16vec2, I16Vec2,
+	as_u16vec2, U16Vec2,
+	as_ivec2, IVec2,
+	as_uvec2, UVec2,
+	as_i64vec2, I64Vec2,
+	as_u64vec2, U64Vec2,
+	as_vec2, Vec2,
+	as_f64vec2, DVec2,
+	(0, x, X, NEG_X, with_x, (1, 0)),
+	(1, y, Y, NEG_Y, with_y, (0, 1)),
 );
 impl_gvec!(I8Vec2, i8, BVec2, 2);
-impl_gvec2!(I8Vec2);
+impl_gvec2!(I8Vec2, I8Vec3);
 impl_signedvec!(I8Vec2);
 impl_signedvec2!(I8Vec2);
 impl_intvec!(I8Vec2);
@@ -474,16 +476,20 @@ impl SIntVec for I8Vec2 {}
 impl SIntVec2 for I8Vec2 {}
 decl_vec!(
 	i8vec3, I8Vec3, BVec3, i8, 3, true, (I8Vec4), (I8Vec2), as_u8vec3, U8Vec3, u8,
-	as_i16vec3, I16Vec3, as_u16vec3, U16Vec3,
-	as_ivec3, IVec3, as_uvec3, UVec3,
-	as_i64vec3, I64Vec3, as_u64vec3, U64Vec3,
-	as_vec3, Vec3, as_f64vec3, DVec3,
-	(0, x, X, NEG_X, (1, 0, 0)),
-	(1, y, Y, NEG_Y, (0, 1, 0)),
-	(2, z, Z, NEG_Z, (0, 0, 1)),
+	as_i16vec3, I16Vec3,
+	as_u16vec3, U16Vec3,
+	as_ivec3, IVec3,
+	as_uvec3, UVec3,
+	as_i64vec3, I64Vec3,
+	as_u64vec3, U64Vec3,
+	as_vec3, Vec3,
+	as_f64vec3, DVec3,
+	(0, x, X, NEG_X, with_x, (1, 0, 0)),
+	(1, y, Y, NEG_Y, with_y, (0, 1, 0)),
+	(2, z, Z, NEG_Z, with_z, (0, 0, 1)),
 );
 impl_gvec!(I8Vec3, i8, BVec3, 3);
-impl_gvec3!(I8Vec3);
+impl_gvec3!(I8Vec3, I8Vec4, I8Vec2);
 impl_signedvec!(I8Vec3);
 impl_signedvec3!(I8Vec3);
 impl_intvec!(I8Vec3);
@@ -492,23 +498,109 @@ impl SIntVec for I8Vec3 {}
 impl SIntVec3 for I8Vec3 {}
 decl_vec!(
 	i8vec4, I8Vec4, BVec4, i8, 4, true, (), (I8Vec3), as_u8vec4, U8Vec4, u8,
-	as_i16vec4, I16Vec4, as_u16vec4, U16Vec4,
-	as_ivec4, IVec4, as_uvec4, UVec4,
-	as_i64vec4, I64Vec4, as_u64vec4, U64Vec4,
-	as_vec4, Vec4, as_f64vec4, DVec4,
-	(0, x, X, NEG_X, (1, 0, 0, 0)),
-	(1, y, Y, NEG_Y, (0, 1, 0, 0)),
-	(2, z, Z, NEG_Z, (0, 0, 1, 0)),
-	(3, w, W, NEG_W, (0, 0, 0, 1)),
+	as_i16vec4, I16Vec4,
+	as_u16vec4, U16Vec4,
+	as_ivec4, IVec4,
+	as_uvec4, UVec4,
+	as_i64vec4, I64Vec4,
+	as_u64vec4, U64Vec4,
+	as_vec4, Vec4,
+	as_f64vec4, DVec4,
+	(0, x, X, NEG_X, with_x, (1, 0, 0, 0)),
+	(1, y, Y, NEG_Y, with_y, (0, 1, 0, 0)),
+	(2, z, Z, NEG_Z, with_z, (0, 0, 1, 0)),
+	(3, w, W, NEG_W, with_w, (0, 0, 0, 1)),
 );
 impl_gvec!(I8Vec4, i8, BVec4, 4);
-impl_gvec4!(I8Vec4);
+impl_gvec4!(I8Vec4, I8Vec3);
 impl_signedvec!(I8Vec4);
 impl_signedvec4!(I8Vec4);
 impl_intvec!(I8Vec4);
 impl IntVec4 for I8Vec4 {}
 impl SIntVec for I8Vec4 {}
 impl SIntVec4 for I8Vec4 {}
+
+pub trait Vec2Ext {
+	fn as_u8vec2(&self) -> U8Vec2;
+	fn as_i8vec2(&self) -> I8Vec2;
+}
+
+macro_rules! impl_vec2ext {
+	($type:ty) => {
+		impl Vec2Ext for $type {
+			fn as_u8vec2(&self) -> U8Vec2 {
+				U8Vec2::new(self.x as u8, self.y as u8)
+			}
+			fn as_i8vec2(&self) -> I8Vec2 {
+				I8Vec2::new(self.x as i8, self.y as i8)
+			}
+		}
+	};
+}
+
+impl_vec2ext!(U16Vec2);
+impl_vec2ext!(I16Vec2);
+impl_vec2ext!(UVec2);
+impl_vec2ext!(IVec2);
+impl_vec2ext!(U64Vec2);
+impl_vec2ext!(I64Vec2);
+impl_vec2ext!(Vec2);
+impl_vec2ext!(DVec2);
+
+pub trait Vec3Ext {
+	fn as_u8vec3(&self) -> U8Vec3;
+	fn as_i8vec3(&self) -> I8Vec3;
+}
+
+macro_rules! impl_vec3ext {
+	($type:ty) => {
+		impl Vec3Ext for $type {
+			fn as_u8vec3(&self) -> U8Vec3 {
+				U8Vec3::new(self.x as u8, self.y as u8, self.z as u8)
+			}
+			fn as_i8vec3(&self) -> I8Vec3 {
+				I8Vec3::new(self.x as i8, self.y as i8, self.z as i8)
+			}
+		}
+	};
+}
+
+impl_vec3ext!(U16Vec3);
+impl_vec3ext!(I16Vec3);
+impl_vec3ext!(UVec3);
+impl_vec3ext!(IVec3);
+impl_vec3ext!(U64Vec3);
+impl_vec3ext!(I64Vec3);
+impl_vec3ext!(Vec3);
+impl_vec3ext!(Vec3A);
+impl_vec3ext!(DVec3);
+
+pub trait Vec4Ext {
+	fn as_u8vec4(&self) -> U8Vec4;
+	fn as_i8vec4(&self) -> I8Vec4;
+}
+
+macro_rules! impl_vec4ext {
+	($type:ty) => {
+		impl Vec4Ext for $type {
+			fn as_u8vec4(&self) -> U8Vec4 {
+				U8Vec4::new(self.x as u8, self.y as u8, self.z as u8, self.w as u8)
+			}
+			fn as_i8vec4(&self) -> I8Vec4 {
+				I8Vec4::new(self.x as i8, self.y as i8, self.z as i8, self.w as i8)
+			}
+		}
+	};
+}
+
+impl_vec4ext!(U16Vec4);
+impl_vec4ext!(I16Vec4);
+impl_vec4ext!(UVec4);
+impl_vec4ext!(IVec4);
+impl_vec4ext!(U64Vec4);
+impl_vec4ext!(I64Vec4);
+impl_vec4ext!(Vec4);
+impl_vec4ext!(DVec4);
 
 /**
 Generalization of the glam `select()` function for vectors that selects each component from a
@@ -519,6 +611,7 @@ Panics if the length of `indices` is less than `V::DIM`.
 
 Panics if an index exceeds the bounds of `vecs`.
 */
-pub fn select<V: GVec, I: AsPrimitive<usize>, D: Index<usize, Output = I>>(vecs: &[V], indices: &D) -> V {
+pub fn select<V, I, D>(vecs: &[V], indices: &D) -> V
+where V: GVec, I: AsPrimitive<usize>, D: Index<usize, Output = I> {
 	V::from_slice(&(0..V::DIM).map(|i| vecs[indices[i].as_()][i]).collect::<Vec<_>>())
 }

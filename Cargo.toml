@@ -1,6 +1,6 @@
 [package]
 name = "glam-traits"
-version = "0.1.4"
+version = "0.2.0"
 edition = "2021"
 authors = ["Zane Jacobs"]
 description = "Traits for the vectors in glam."
@@ -8,8 +8,8 @@ license = "MIT"
 repository = "https://github.com/Ababwa/glam-traits"
 
 [dependencies]
-glam = "0.27.0"
-num-traits = { version = "0.2.18", optional = true }
+glam = "0.29.0"
+num-traits = { version = "0.2.19", optional = true }
 
 [features]
 ext = ["dep:num-traits"]
