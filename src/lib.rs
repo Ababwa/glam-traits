@@ -1,5 +1,5 @@
 /*!
-This crate provides traits for the vectors in [glam](https://docs.rs/glam).
+Traits for the vectors in [glam](https://github.com/bitshifter/glam-rs/).
 
 There are traits for the following characteristics:
 * "Any"
@@ -22,15 +22,12 @@ For lengths "any", 2, 3 and 4:
 
 As well as for concrete types of any length:
 
-[`I16Vec`], [`U16Vec`], [`I32Vec`], [`U32Vec`], [`I64Vec`], [`U64Vec`], [`F32Vec`], [`F64Vec`]
+[`I8Vec`], [`U8Vec`], [`I16Vec`], [`U16Vec`], [`I32Vec`], [`U32Vec`], [`I64Vec`], [`U64Vec`], [`USizeVec`], [`F32Vec`], [`F64Vec`]
 
-[`GBVec`] is also provided to cover boolean vectors.
+[`BVec`] is also provided to cover boolean vectors.
 
 Traits are implemented for the appropriate `glam` types.
 */
-
-#[cfg(feature = "ext")]
-pub mod ext;
 
 use std::{
 	fmt::{Debug, Display},
@@ -52,12 +49,15 @@ use std::{
 };
 use glam::{
 	BVec2, BVec3, BVec3A, BVec4, BVec4A,
+	I8Vec2, I8Vec3, I8Vec4,
+	U8Vec2, U8Vec3, U8Vec4,
 	I16Vec2, I16Vec3, I16Vec4,
 	U16Vec2, U16Vec3, U16Vec4,
 	IVec2, IVec3, IVec4,
 	UVec2, UVec3, UVec4,
 	I64Vec2, I64Vec3, I64Vec4,
 	U64Vec2, U64Vec3, U64Vec4,
+	USizeVec2, USizeVec3, USizeVec4,
 	Vec2, Vec3, Vec3A, Vec4,
 	DVec2, DVec3, DVec4,
 };
@@ -68,10 +68,9 @@ mod private {
 use private::Sealed;
 
 /**
-Boolean vector of any length.
-trait.
+Vector of any length whose elements are [`bool`].
 */
-pub trait GBVec
+pub trait BVec
 where
 	Self:
 		Sealed +
@@ -90,12 +89,17 @@ where
 		BitXorAssign +
 		Debug +
 		Display +
+		From<Self::Array> +
+		Into<Self::Array> +
 	,
+	Self::Array: Index<usize, Output = bool>,
 {
+	type Array;
 	const FALSE: Self;
 	const TRUE: Self;
 	const DIM: usize;
 	fn splat(v: bool) -> Self;
+	fn from_array(a: Self::Array) -> Self;
 	fn bitmask(self) -> u32;
 	fn any(self) -> bool;
 	fn all(self) -> bool;
@@ -106,11 +110,13 @@ where
 macro_rules! impl_gbvec {
 	($type:ty, $dim:literal) => {
 		impl Sealed for $type {}
-		impl GBVec for $type {
+		impl BVec for $type {
+			type Array = [bool; $dim];
 			const FALSE: Self = Self::FALSE;
 			const TRUE: Self = Self::TRUE;
 			const DIM: usize = $dim;
 			fn splat(v: bool) -> Self { Self::splat(v) }
+			fn from_array(a: Self::Array) -> Self { Self::from_array(a) }
 			fn bitmask(self) -> u32 { self.bitmask() }
 			fn any(self) -> bool { self.any() }
 			fn all(self) -> bool { self.all() }
@@ -206,7 +212,7 @@ where
 		Rem<Self, Output = Self> +
 		Rem<&'a Self, Output = Self> +
 	,
-	Self::BVec: GBVec,
+	Self::BVec: BVec,
 	Self::Axes: Index<usize, Output = Self>,
 	Self::Array: Index<usize, Output = Self::Scalar>,
 {
@@ -218,6 +224,7 @@ where
 	const ONE: Self;
 	const MIN: Self;
 	const MAX: Self;
+	const AXES: Self::Axes;
 	const DIM: usize;
 	fn splat(v: Self::Scalar) -> Self;
 	fn map<F: Fn(Self::Scalar) -> Self::Scalar>(self, f: F) -> Self;
@@ -232,6 +239,8 @@ where
 	fn clamp(self, min: Self, max: Self) -> Self;
 	fn min_element(self) -> Self::Scalar;
 	fn max_element(self) -> Self::Scalar;
+	fn min_position(self) -> usize;
+	fn max_position(self) -> usize;
 	fn element_sum(self) -> Self::Scalar;
 	fn element_product(self) -> Self::Scalar;
 	fn select(mask: Self::BVec, if_true: Self, if_false: Self) -> Self;
@@ -256,6 +265,7 @@ macro_rules! impl_gvec {
 			const ONE: Self = Self::ONE;
 			const MIN: Self = Self::MIN;
 			const MAX: Self = Self::MAX;
+			const AXES: Self::Axes = Self::AXES;
 			const DIM: usize = $dim;
 			fn splat(v: Self::Scalar) -> Self { Self::splat(v) }
 			fn map<F: Fn(Self::Scalar) -> Self::Scalar>(self, f: F) -> Self { self.map(f) }
@@ -270,6 +280,8 @@ macro_rules! impl_gvec {
 			fn clamp(self, min: Self, max: Self) -> Self { self.clamp(min, max) }
 			fn min_element(self) -> Self::Scalar { self.min_element() }
 			fn max_element(self) -> Self::Scalar { self.max_element() }
+			fn min_position(self) -> usize { self.min_position() }
+			fn max_position(self) -> usize { self.max_position() }
 			fn element_sum(self) -> Self::Scalar { self.element_sum() }
 			fn element_product(self) -> Self::Scalar { self.element_product() }
 			fn select(mask: Self::BVec, if_true: Self, if_false: Self) -> Self { Self::select(mask, if_true, if_false) }
@@ -285,6 +297,12 @@ macro_rules! impl_gvec {
 }
 pub(crate) use impl_gvec;
 
+impl_gvec!(I8Vec2, i8, BVec2, 2);
+impl_gvec!(I8Vec3, i8, BVec3, 3);
+impl_gvec!(I8Vec4, i8, BVec4, 4);
+impl_gvec!(U8Vec2, u8, BVec2, 2);
+impl_gvec!(U8Vec3, u8, BVec3, 3);
+impl_gvec!(U8Vec4, u8, BVec4, 4);
 impl_gvec!(I16Vec2, i16, BVec2, 2);
 impl_gvec!(I16Vec3, i16, BVec3, 3);
 impl_gvec!(I16Vec4, i16, BVec4, 4);
@@ -303,6 +321,9 @@ impl_gvec!(I64Vec4, i64, BVec4, 4);
 impl_gvec!(U64Vec2, u64, BVec2, 2);
 impl_gvec!(U64Vec3, u64, BVec3, 3);
 impl_gvec!(U64Vec4, u64, BVec4, 4);
+impl_gvec!(USizeVec2, usize, BVec2, 2);
+impl_gvec!(USizeVec3, usize, BVec3, 3);
+impl_gvec!(USizeVec4, usize, BVec4, 4);
 impl_gvec!(Vec2, f32, BVec2, 2);
 impl_gvec!(Vec3, f32, BVec3, 3);
 impl_gvec!(Vec3A, f32, BVec3A, 3);
@@ -350,12 +371,15 @@ macro_rules! impl_gvec2 {
 }
 pub(crate) use impl_gvec2;
 
+impl_gvec2!(I8Vec2, I8Vec3);
+impl_gvec2!(U8Vec2, U8Vec3);
 impl_gvec2!(I16Vec2, I16Vec3);
 impl_gvec2!(U16Vec2, U16Vec3);
 impl_gvec2!(IVec2, IVec3);
 impl_gvec2!(UVec2, UVec3);
 impl_gvec2!(I64Vec2, I64Vec3);
 impl_gvec2!(U64Vec2, U64Vec3);
+impl_gvec2!(USizeVec2, USizeVec3);
 impl_gvec2!(Vec2, Vec3);
 impl_gvec2!(DVec2, DVec3);
 
@@ -410,12 +434,15 @@ macro_rules! impl_gvec3 {
 }
 pub(crate) use impl_gvec3;
 
+impl_gvec3!(I8Vec3, I8Vec4, I8Vec2);
+impl_gvec3!(U8Vec3, U8Vec4, U8Vec2);
 impl_gvec3!(I16Vec3, I16Vec4, I16Vec2);
 impl_gvec3!(U16Vec3, U16Vec4, U16Vec2);
 impl_gvec3!(IVec3, IVec4, IVec2);
 impl_gvec3!(UVec3, UVec4, UVec2);
 impl_gvec3!(I64Vec3, I64Vec4, I64Vec2);
 impl_gvec3!(U64Vec3, U64Vec4, U64Vec2);
+impl_gvec3!(USizeVec3, USizeVec4, USizeVec2);
 impl_gvec3!(Vec3, Vec4, Vec2);
 impl_gvec3!(Vec3A, Vec4, Vec2);
 impl_gvec3!(DVec3, DVec4, DVec2);
@@ -471,12 +498,15 @@ macro_rules! impl_gvec4 {
 }
 pub(crate) use impl_gvec4;
 
+impl_gvec4!(I8Vec4, I8Vec3);
+impl_gvec4!(U8Vec4, U8Vec3);
 impl_gvec4!(I16Vec4, I16Vec3);
 impl_gvec4!(U16Vec4, U16Vec3);
 impl_gvec4!(IVec4, IVec3);
 impl_gvec4!(UVec4, UVec3);
 impl_gvec4!(I64Vec4, I64Vec3);
 impl_gvec4!(U64Vec4, U64Vec3);
+impl_gvec4!(USizeVec4, USizeVec3);
 impl_gvec4!(Vec4, Vec3);
 impl_gvec4!(DVec4, DVec3);
 
@@ -511,6 +541,9 @@ pub(crate) use impl_signedvec;
 impl_signedvec!(I16Vec2);
 impl_signedvec!(I16Vec3);
 impl_signedvec!(I16Vec4);
+impl_signedvec!(I8Vec2);
+impl_signedvec!(I8Vec3);
+impl_signedvec!(I8Vec4);
 impl_signedvec!(IVec2);
 impl_signedvec!(IVec3);
 impl_signedvec!(IVec4);
@@ -549,6 +582,7 @@ macro_rules! impl_signedvec2 {
 }
 pub(crate) use impl_signedvec2;
 
+impl_signedvec2!(I8Vec2);
 impl_signedvec2!(I16Vec2);
 impl_signedvec2!(IVec2);
 impl_signedvec2!(I64Vec2);
@@ -575,6 +609,7 @@ macro_rules! impl_signedvec3 {
 }
 pub(crate) use impl_signedvec3;
 
+impl_signedvec3!(I8Vec3);
 impl_signedvec3!(I16Vec3);
 impl_signedvec3!(IVec3);
 impl_signedvec3!(I64Vec3);
@@ -604,6 +639,7 @@ macro_rules! impl_signedvec4 {
 }
 pub(crate) use impl_signedvec4;
 
+impl_signedvec4!(I8Vec4);
 impl_signedvec4!(I16Vec4);
 impl_signedvec4!(IVec4);
 impl_signedvec4!(I64Vec4);
@@ -629,6 +665,7 @@ pub trait FloatVec: SignedVec {
 	fn try_normalize(self) -> Option<Self>;
 	fn normalize_or(self, fallback: Self) -> Self;
 	fn normalize_or_zero(self) -> Self;
+	fn normalize_and_length(self) -> (Self, Self::Scalar);
 	fn is_normalized(self) -> bool;
 	fn project_onto(self, rhs: Self) -> Self;
 	fn reject_from(self, rhs: Self) -> Self;
@@ -673,6 +710,7 @@ macro_rules! impl_floatvec {
 			fn try_normalize(self) -> Option<Self> { self.try_normalize() }
 			fn normalize_or(self, fallback: Self) -> Self { self.normalize_or(fallback) }
 			fn normalize_or_zero(self) -> Self { self.normalize_or_zero() }
+			fn normalize_and_length(self) -> (Self, Self::Scalar) { self.normalize_and_length() }
 			fn is_normalized(self) -> bool { self.is_normalized() }
 			fn project_onto(self, rhs: Self) -> Self { self.project_onto(rhs) }
 			fn reject_from(self, rhs: Self) -> Self { self.reject_from(rhs) }
@@ -713,7 +751,7 @@ impl_floatvec!(DVec4);
 Vector of length 2 whose elements are a floating-point type.
 */
 pub trait FloatVec2: FloatVec + SignedVec2 {
-	fn angle_between(self, rhs: Self) -> Self::Scalar;
+	fn angle_to(self, rhs: Self) -> Self::Scalar;
 	fn from_angle(angle: Self::Scalar) -> Self;
 	fn to_angle(self) -> Self::Scalar;
 	fn rotate_towards(&self, rhs: Self, max_angle: Self::Scalar) -> Self;
@@ -722,7 +760,7 @@ pub trait FloatVec2: FloatVec + SignedVec2 {
 macro_rules! impl_floatvec2 {
 	($type:ty) => {
 		impl FloatVec2 for $type {
-			fn angle_between(self, rhs: Self) -> Self::Scalar { self.angle_to(rhs) }
+			fn angle_to(self, rhs: Self) -> Self::Scalar { self.angle_to(rhs) }
 			fn from_angle(angle: Self::Scalar) -> Self { Self::from_angle(angle) }
 			fn to_angle(self) -> Self::Scalar { self.to_angle() }
 			fn rotate_towards(&self, rhs: Self, max_angle: Self::Scalar) -> Self { self.rotate_towards(rhs, max_angle) }
@@ -741,6 +779,8 @@ pub trait FloatVec3: FloatVec + SignedVec3 {
 	fn any_orthogonal_vector(&self) -> Self;
 	fn any_orthonormal_vector(&self) -> Self;
 	fn any_orthonormal_pair(&self) -> (Self, Self);
+	fn rotate_towards(self, rhs: Self, max_angle: Self::Scalar) -> Self;
+	fn slerp(self, rhs: Self, s: Self::Scalar) -> Self;
 }
 
 macro_rules! impl_floatvec3 {
@@ -750,6 +790,8 @@ macro_rules! impl_floatvec3 {
 			fn any_orthogonal_vector(&self) -> Self { self.any_orthogonal_vector() }
 			fn any_orthonormal_vector(&self) -> Self { self.any_orthonormal_vector() }
 			fn any_orthonormal_pair(&self) -> (Self, Self) { self.any_orthonormal_pair() }
+			fn rotate_towards(self, rhs: Self, max_angle: Self::Scalar) -> Self { self.rotate_towards(rhs, max_angle) }
+			fn slerp(self, rhs: Self, s: Self::Scalar) -> Self { self.slerp(rhs, s) }
 		}
 	};
 }
@@ -799,6 +841,11 @@ where
 		Shr<u64, Output = Self> +
 	,
 {
+	type UnsignedScalar;
+	fn checked_add(self, rhs: Self) -> Option<Self>;
+	fn checked_sub(self, rhs: Self) -> Option<Self>;
+	fn checked_mul(self, rhs: Self) -> Option<Self>;
+	fn checked_div(self, rhs: Self) -> Option<Self>;
 	fn wrapping_add(self, rhs: Self) -> Self;
 	fn wrapping_sub(self, rhs: Self) -> Self;
 	fn wrapping_mul(self, rhs: Self) -> Self;
@@ -807,11 +854,19 @@ where
 	fn saturating_sub(self, rhs: Self) -> Self;
 	fn saturating_mul(self, rhs: Self) -> Self;
 	fn saturating_div(self, rhs: Self) -> Self;
+	fn manhattan_distance(self, rhs: Self) -> Self::UnsignedScalar;
+	fn checked_manhattan_distance(self, rhs: Self) -> Option<Self::UnsignedScalar>;
+	fn chebyshev_distance(self, rhs: Self) -> Self::UnsignedScalar;
 }
 
 macro_rules! impl_intvec {
-	($type:ty) => {
+	($type:ty, $unsigned:ty) => {
 		impl IntVec for $type {
+			type UnsignedScalar = $unsigned;
+			fn checked_add(self, rhs: Self) -> Option<Self> { self.checked_add(rhs) }
+			fn checked_sub(self, rhs: Self) -> Option<Self> { self.checked_sub(rhs) }
+			fn checked_mul(self, rhs: Self) -> Option<Self> { self.checked_mul(rhs) }
+			fn checked_div(self, rhs: Self) -> Option<Self> { self.checked_div(rhs) }
 			fn wrapping_add(self, rhs: Self) -> Self { self.wrapping_add(rhs) }
 			fn wrapping_sub(self, rhs: Self) -> Self { self.wrapping_sub(rhs) }
 			fn wrapping_mul(self, rhs: Self) -> Self { self.wrapping_mul(rhs) }
@@ -820,29 +875,41 @@ macro_rules! impl_intvec {
 			fn saturating_sub(self, rhs: Self) -> Self { self.saturating_sub(rhs) }
 			fn saturating_mul(self, rhs: Self) -> Self { self.saturating_mul(rhs) }
 			fn saturating_div(self, rhs: Self) -> Self { self.saturating_div(rhs) }
+			fn manhattan_distance(self, rhs: Self) -> Self::UnsignedScalar { self.manhattan_distance(rhs) }
+			fn checked_manhattan_distance(self, rhs: Self) -> Option<Self::UnsignedScalar> { self.checked_manhattan_distance(rhs) }
+			fn chebyshev_distance(self, rhs: Self) -> Self::UnsignedScalar { self.chebyshev_distance(rhs) }
 		}
 	};
 }
 pub(crate) use impl_intvec;
 
-impl_intvec!(I16Vec2);
-impl_intvec!(I16Vec3);
-impl_intvec!(I16Vec4);
-impl_intvec!(U16Vec2);
-impl_intvec!(U16Vec3);
-impl_intvec!(U16Vec4);
-impl_intvec!(IVec2);
-impl_intvec!(IVec3);
-impl_intvec!(IVec4);
-impl_intvec!(UVec2);
-impl_intvec!(UVec3);
-impl_intvec!(UVec4);
-impl_intvec!(I64Vec2);
-impl_intvec!(I64Vec3);
-impl_intvec!(I64Vec4);
-impl_intvec!(U64Vec2);
-impl_intvec!(U64Vec3);
-impl_intvec!(U64Vec4);
+impl_intvec!(I8Vec2, u8);
+impl_intvec!(I8Vec3, u8);
+impl_intvec!(I8Vec4, u8);
+impl_intvec!(U8Vec2, u8);
+impl_intvec!(U8Vec3, u8);
+impl_intvec!(U8Vec4, u8);
+impl_intvec!(I16Vec2, u16);
+impl_intvec!(I16Vec3, u16);
+impl_intvec!(I16Vec4, u16);
+impl_intvec!(U16Vec2, u16);
+impl_intvec!(U16Vec3, u16);
+impl_intvec!(U16Vec4, u16);
+impl_intvec!(IVec2, u32);
+impl_intvec!(IVec3, u32);
+impl_intvec!(IVec4, u32);
+impl_intvec!(UVec2, u32);
+impl_intvec!(UVec3, u32);
+impl_intvec!(UVec4, u32);
+impl_intvec!(I64Vec2, u64);
+impl_intvec!(I64Vec3, u64);
+impl_intvec!(I64Vec4, u64);
+impl_intvec!(U64Vec2, u64);
+impl_intvec!(U64Vec3, u64);
+impl_intvec!(U64Vec4, u64);
+impl_intvec!(USizeVec2, usize);
+impl_intvec!(USizeVec3, usize);
+impl_intvec!(USizeVec4, usize);
 
 /**
 Vector of length 2 whose elements are an integer type.
@@ -859,12 +926,15 @@ where
 	,
 {}
 
+impl IntVec2 for I8Vec2 {}
+impl IntVec2 for U8Vec2 {}
 impl IntVec2 for I16Vec2 {}
 impl IntVec2 for U16Vec2 {}
 impl IntVec2 for IVec2 {}
 impl IntVec2 for UVec2 {}
 impl IntVec2 for I64Vec2 {}
 impl IntVec2 for U64Vec2 {}
+impl IntVec2 for USizeVec2 {}
 
 /**
 Vector of length 3 whose elements are an integer type.
@@ -881,13 +951,15 @@ where
 	,
 {}
 
+impl IntVec3 for I8Vec3 {}
+impl IntVec3 for U8Vec3 {}
 impl IntVec3 for I16Vec3 {}
 impl IntVec3 for U16Vec3 {}
 impl IntVec3 for IVec3 {}
 impl IntVec3 for UVec3 {}
 impl IntVec3 for I64Vec3 {}
 impl IntVec3 for U64Vec3 {}
-
+impl IntVec3 for USizeVec3 {}
 
 /**
 Vector of length 4 whose elements are an integer type.
@@ -904,18 +976,24 @@ where
 	,
 {}
 
+impl IntVec4 for I8Vec4 {}
+impl IntVec4 for U8Vec4 {}
 impl IntVec4 for I16Vec4 {}
 impl IntVec4 for U16Vec4 {}
 impl IntVec4 for IVec4 {}
 impl IntVec4 for UVec4 {}
 impl IntVec4 for I64Vec4 {}
 impl IntVec4 for U64Vec4 {}
+impl IntVec4 for USizeVec4 {}
 
 /**
 Vector of any length whose elements are a signed integer type.
 */
 pub trait SIntVec: IntVec + SignedVec {}
 
+impl SIntVec for I8Vec2 {}
+impl SIntVec for I8Vec3 {}
+impl SIntVec for I8Vec4 {}
 impl SIntVec for I16Vec2 {}
 impl SIntVec for I16Vec3 {}
 impl SIntVec for I16Vec4 {}
@@ -931,6 +1009,7 @@ Vector of length 2 whose elements are a signed integer type.
 */
 pub trait SIntVec2: SIntVec + IntVec2 {}
 
+impl SIntVec2 for I8Vec2 {}
 impl SIntVec2 for I16Vec2 {}
 impl SIntVec2 for IVec2 {}
 impl SIntVec2 for I64Vec2 {}
@@ -940,6 +1019,7 @@ Vector of length 3 whose elements are a signed integer type.
 */
 pub trait SIntVec3: SIntVec + IntVec3 {}
 
+impl SIntVec3 for I8Vec3 {}
 impl SIntVec3 for I16Vec3 {}
 impl SIntVec3 for IVec3 {}
 impl SIntVec3 for I64Vec3 {}
@@ -949,6 +1029,7 @@ Vector of length 4 whose elements are a signed integer type.
 */
 pub trait SIntVec4: SIntVec + IntVec4 {}
 
+impl SIntVec4 for I8Vec4 {}
 impl SIntVec4 for I16Vec4 {}
 impl SIntVec4 for IVec4 {}
 impl SIntVec4 for I64Vec4 {}
@@ -958,6 +1039,9 @@ Vector of any length whose elements are an unsigned integer type.
 */
 pub trait UIntVec: IntVec {}
 
+impl UIntVec for U8Vec2 {}
+impl UIntVec for U8Vec3 {}
+impl UIntVec for U8Vec4 {}
 impl UIntVec for U16Vec2 {}
 impl UIntVec for U16Vec3 {}
 impl UIntVec for U16Vec4 {}
@@ -967,33 +1051,60 @@ impl UIntVec for UVec4 {}
 impl UIntVec for U64Vec2 {}
 impl UIntVec for U64Vec3 {}
 impl UIntVec for U64Vec4 {}
+impl UIntVec for USizeVec2 {}
+impl UIntVec for USizeVec3 {}
+impl UIntVec for USizeVec4 {}
 
 /**
 Vector of length 2 whose elements are an unsigned integer type.
 */
 pub trait UIntVec2: UIntVec + IntVec2 {}
 
+impl UIntVec2 for U8Vec2 {}
 impl UIntVec2 for U16Vec2 {}
 impl UIntVec2 for UVec2 {}
 impl UIntVec2 for U64Vec2 {}
+impl UIntVec2 for USizeVec2 {}
 
 /**
 Vector of length 3 whose elements are an unsigned integer type.
 */
 pub trait UIntVec3: UIntVec + IntVec3 {}
 
+impl UIntVec3 for U8Vec3 {}
 impl UIntVec3 for U16Vec3 {}
 impl UIntVec3 for UVec3 {}
 impl UIntVec3 for U64Vec3 {}
+impl UIntVec3 for USizeVec3 {}
 
 /**
 Vector of length 4 whose elements are an unsigned integer type.
 */
 pub trait UIntVec4: UIntVec + IntVec4 {}
 
+impl UIntVec4 for U8Vec4 {}
 impl UIntVec4 for U16Vec4 {}
 impl UIntVec4 for UVec4 {}
 impl UIntVec4 for U64Vec4 {}
+impl UIntVec4 for USizeVec4 {}
+
+/**
+Vector of any length whose elements are [`i8`].
+*/
+pub trait I8Vec: SIntVec<Scalar = i8> {}
+
+impl I8Vec for I8Vec2 {}
+impl I8Vec for I8Vec3 {}
+impl I8Vec for I8Vec4 {}
+
+/**
+Vector of any length whose elements are [`u8`].
+*/
+pub trait U8Vec: UIntVec<Scalar = u8> {}
+
+impl U8Vec for U8Vec2 {}
+impl U8Vec for U8Vec3 {}
+impl U8Vec for U8Vec4 {}
 
 /**
 Vector of any length whose elements are [`i16`].
@@ -1048,6 +1159,15 @@ pub trait U64Vec: UIntVec<Scalar = u64> {}
 impl U64Vec for U64Vec2 {}
 impl U64Vec for U64Vec3 {}
 impl U64Vec for U64Vec4 {}
+
+/**
+Vector of any length whose elements are [`usize`].
+*/
+pub trait USizeVec: UIntVec<Scalar = usize> {}
+
+impl USizeVec for USizeVec2 {}
+impl USizeVec for USizeVec3 {}
+impl USizeVec for USizeVec4 {}
 
 /**
 Vector of any length whose elements are [`f32`].

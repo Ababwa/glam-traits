@@ -73,8 +73,8 @@ For lengths "any", 2, 3 and 4:
 
 As well as for concrete types of any length:
 
-`I16Vec`, `U16Vec`, `I32Vec`, `U32Vec`, `I64Vec`, `U64Vec`, `F32Vec`, `F64Vec`
+`I8Vec`, `U8Vec`, `I16Vec`, `U16Vec`, `I32Vec`, `U32Vec`, `I64Vec`, `U64Vec`, `USizeVec`, `F32Vec`, `F64Vec`
 
-`GBVec` is also provided to cover boolean vectors.
+`BVec` is also provided to cover boolean vectors.
 
 Traits are implemented for the appropriate glam types.
