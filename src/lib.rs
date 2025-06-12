@@ -215,11 +215,33 @@ where
 	Self::BVec: BVec,
 	Self::Axes: Index<usize, Output = Self>,
 	Self::Array: Index<usize, Output = Self::Scalar>,
+	Self::I8Vec: I8Vec,
+	Self::U8Vec: U8Vec,
+	Self::I16Vec: I16Vec,
+	Self::U16Vec: U16Vec,
+	Self::I32Vec: I32Vec,
+	Self::U32Vec: U32Vec,
+	Self::I64Vec: I64Vec,
+	Self::U64Vec: U64Vec,
+	Self::USizeVec: USizeVec,
+	Self::F32Vec: F32Vec,
+	Self::F64Vec: F64Vec,
 {
 	type Scalar;
 	type BVec;
 	type Axes;
 	type Array;
+	type I8Vec;
+	type U8Vec;
+	type I16Vec;
+	type U16Vec;
+	type I32Vec;
+	type U32Vec;
+	type I64Vec;
+	type U64Vec;
+	type USizeVec;
+	type F32Vec;
+	type F64Vec;
 	const ZERO: Self;
 	const ONE: Self;
 	const MIN: Self;
@@ -251,16 +273,87 @@ where
 	fn cmple(self, rhs: Self) -> Self::BVec;
 	fn cmplt(self, rhs: Self) -> Self::BVec;
 	fn length_squared(self) -> Self::Scalar;
+	fn as_i8vec(&self) -> Self::I8Vec;
+	fn as_u8vec(&self) -> Self::U8Vec;
+	fn as_i16vec(&self) -> Self::I16Vec;
+	fn as_u16vec(&self) -> Self::U16Vec;
+	fn as_ivec(&self) -> Self::I32Vec;
+	fn as_uvec(&self) -> Self::U32Vec;
+	fn as_i64vec(&self) -> Self::I64Vec;
+	fn as_u64vec(&self) -> Self::U64Vec;
+	fn as_usizevec(&self) -> Self::USizeVec;
+	fn as_vec(&self) -> Self::F32Vec;
+	fn as_dvec(&self) -> Self::F64Vec;
+}
+
+macro_rules! as_types {
+	(2) => {
+		type I8Vec = I8Vec2;
+		type U8Vec = U8Vec2;
+		type I16Vec = I16Vec2;
+		type U16Vec = U16Vec2;
+		type I32Vec = IVec2;
+		type U32Vec = UVec2;
+		type I64Vec = I64Vec2;
+		type U64Vec = U64Vec2;
+		type USizeVec = USizeVec2;
+		type F32Vec = Vec2;
+		type F64Vec = DVec2;
+	};
+	(3) => {
+		type I8Vec = I8Vec3;
+		type U8Vec = U8Vec3;
+		type I16Vec = I16Vec3;
+		type U16Vec = U16Vec3;
+		type I32Vec = IVec3;
+		type U32Vec = UVec3;
+		type I64Vec = I64Vec3;
+		type U64Vec = U64Vec3;
+		type USizeVec = USizeVec3;
+		type F32Vec = Vec3;
+		type F64Vec = DVec3;
+	};
+	(4) => {
+		type I8Vec = I8Vec4;
+		type U8Vec = U8Vec4;
+		type I16Vec = I16Vec4;
+		type U16Vec = U16Vec4;
+		type I32Vec = IVec4;
+		type U32Vec = UVec4;
+		type I64Vec = I64Vec4;
+		type U64Vec = U64Vec4;
+		type USizeVec = USizeVec4;
+		type F32Vec = Vec4;
+		type F64Vec = DVec4;
+	};
+}
+
+macro_rules! impl_as {
+	($fn_name:ident, $out:ty, ($($comp:ident),*)) => {
+		fn $fn_name(&self) -> $out {
+			<$out>::new($(self.$comp as <$out as GVec>::Scalar),*)
+		}
+	};
+	($fn_name:ident, $out:ty, 2) => {
+		impl_as!($fn_name, $out, (x, y));
+	};
+	($fn_name:ident, $out:ty, 3) => {
+		impl_as!($fn_name, $out, (x, y, z));
+	};
+	($fn_name:ident, $out:ty, 4) => {
+		impl_as!($fn_name, $out, (x, y, z, w));
+	};
 }
 
 macro_rules! impl_gvec {
-	($type:ty, $scalar:ty, $bvec:ty, $dim:literal) => {
+	($type:ty, $scalar:ty, $bvec:ty, $dim:tt) => {
 		impl Sealed for $type {}
 		impl GVec for $type {
 			type Scalar = $scalar;
 			type BVec = $bvec;
 			type Axes = [Self; $dim];
 			type Array = [$scalar; $dim];
+			as_types!($dim);
 			const ZERO: Self = Self::ZERO;
 			const ONE: Self = Self::ONE;
 			const MIN: Self = Self::MIN;
@@ -292,6 +385,17 @@ macro_rules! impl_gvec {
 			fn cmple(self, rhs: Self) -> Self::BVec { self.cmple(rhs) }
 			fn cmplt(self, rhs: Self) -> Self::BVec { self.cmplt(rhs) }
 			fn length_squared(self) -> Self::Scalar { self.length_squared() }
+			impl_as!(as_i8vec, Self::I8Vec, $dim);
+			impl_as!(as_u8vec, Self::U8Vec, $dim);
+			impl_as!(as_i16vec, Self::I16Vec, $dim);
+			impl_as!(as_u16vec, Self::U16Vec, $dim);
+			impl_as!(as_ivec, Self::I32Vec, $dim);
+			impl_as!(as_uvec, Self::U32Vec, $dim);
+			impl_as!(as_i64vec, Self::I64Vec, $dim);
+			impl_as!(as_u64vec, Self::U64Vec, $dim);
+			impl_as!(as_usizevec, Self::USizeVec, $dim);
+			impl_as!(as_vec, Self::F32Vec, $dim);
+			impl_as!(as_dvec, Self::F64Vec, $dim);
 		}
 	};
 }
@@ -338,7 +442,21 @@ Generic vector of length 2.
 pub trait GVec2
 where
 	Self:
-		GVec<Axes = [Self; 2]> +
+		GVec<
+			Axes = [Self; 2],
+			Array = [<Self as GVec>::Scalar; 2],
+			I8Vec = I8Vec2,
+			U8Vec = U8Vec2,
+			I16Vec = I16Vec2,
+			U16Vec = U16Vec2,
+			I32Vec = IVec2,
+			U32Vec = UVec2,
+			I64Vec = I64Vec2,
+			U64Vec = U64Vec2,
+			USizeVec = USizeVec2,
+			F32Vec = Vec2,
+			F64Vec = DVec2,
+		> +
 		From<(Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar)> +
 	,
@@ -389,7 +507,21 @@ Generic vector of length 3.
 pub trait GVec3
 where
 	Self:
-		GVec<Axes = [Self; 3]> +
+		GVec<
+			Axes = [Self; 3],
+			Array = [<Self as GVec>::Scalar; 3],
+			I8Vec = I8Vec3,
+			U8Vec = U8Vec3,
+			I16Vec = I16Vec3,
+			U16Vec = U16Vec3,
+			I32Vec = IVec3,
+			U32Vec = UVec3,
+			I64Vec = I64Vec3,
+			U64Vec = U64Vec3,
+			USizeVec = USizeVec3,
+			F32Vec = Vec3,
+			F64Vec = DVec3,
+		> +
 		From<(Self::Scalar, Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar, Self::Scalar)> +
 	,
@@ -453,7 +585,21 @@ Generic vector of length 4.
 pub trait GVec4
 where
 	Self:
-		GVec<Axes = [Self; 4]> +
+		GVec<
+			Axes = [Self; 4],
+			Array = [<Self as GVec>::Scalar; 4],
+			I8Vec = I8Vec4,
+			U8Vec = U8Vec4,
+			I16Vec = I16Vec4,
+			U16Vec = U16Vec4,
+			I32Vec = IVec4,
+			U32Vec = UVec4,
+			I64Vec = I64Vec4,
+			U64Vec = U64Vec4,
+			USizeVec = USizeVec4,
+			F32Vec = Vec4,
+			F64Vec = DVec4,
+		> +
 		From<(Self::Scalar, Self::Scalar, Self::Scalar, Self::Scalar)> +
 		Into<(Self::Scalar, Self::Scalar, Self::Scalar, Self::Scalar)> +
 	,
