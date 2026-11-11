@@ -7,5 +7,6 @@ description = "Traits for the vectors in glam."
 license = "0BSD"
 repository = "https://github.com/Ababwa/glam-traits"
 
-[dependencies]
-glam = "0.30.3"
+[dependencies.glam]
+version = "0.30.3"
+default-features = false
