@@ -8,5 +8,6 @@ license = "0BSD"
 repository = "https://github.com/Ababwa/glam-traits"
 
 [dependencies.glam]
-version = "0.30.3"
+version = "0.34.3"
 default-features = false
+features = ["all-types"]

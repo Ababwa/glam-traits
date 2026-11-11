@@ -22,7 +22,7 @@ For lengths "any", 2, 3 and 4:
 
 As well as for concrete types of any length:
 
-[`I8Vec`], [`U8Vec`], [`I16Vec`], [`U16Vec`], [`I32Vec`], [`U32Vec`], [`I64Vec`], [`U64Vec`], [`USizeVec`], [`F32Vec`], [`F64Vec`]
+[`I8Vec`], [`U8Vec`], [`I16Vec`], [`U16Vec`], [`I32Vec`], [`U32Vec`], [`I64Vec`], [`U64Vec`], [`ISizeVec`], [`USizeVec`], [`F32Vec`], [`F64Vec`]
 
 [`BVec`] is also provided to cover boolean vectors.
 
@@ -58,6 +58,7 @@ use glam::{
 	UVec2, UVec3, UVec4,
 	I64Vec2, I64Vec3, I64Vec4,
 	U64Vec2, U64Vec3, U64Vec4,
+	ISizeVec2, ISizeVec3, ISizeVec4,
 	USizeVec2, USizeVec3, USizeVec4,
 	Vec2, Vec3, Vec3A, Vec4,
 	DVec2, DVec3, DVec4,
@@ -104,7 +105,7 @@ where
 	fn bitmask(self) -> u32;
 	fn any(self) -> bool;
 	fn all(self) -> bool;
-	fn test(&self, index: usize) -> bool;
+	fn test(self, index: usize) -> bool;
 	fn set(&mut self, index: usize, value: bool);
 }
 
@@ -121,7 +122,7 @@ macro_rules! impl_gbvec {
 			fn bitmask(self) -> u32 { self.bitmask() }
 			fn any(self) -> bool { self.any() }
 			fn all(self) -> bool { self.all() }
-			fn test(&self, index: usize) -> bool { self.test(index) }
+			fn test(self, index: usize) -> bool { self.test(index) }
 			fn set(&mut self, index: usize, value: bool) { self.set(index, value) }
 		}
 	};
@@ -224,6 +225,7 @@ where
 	Self::U32Vec: U32Vec,
 	Self::I64Vec: I64Vec,
 	Self::U64Vec: U64Vec,
+	Self::ISizeVec: ISizeVec,
 	Self::USizeVec: USizeVec,
 	Self::F32Vec: F32Vec,
 	Self::F64Vec: F64Vec,
@@ -240,6 +242,7 @@ where
 	type U32Vec;
 	type I64Vec;
 	type U64Vec;
+	type ISizeVec;
 	type USizeVec;
 	type F32Vec;
 	type F64Vec;
@@ -282,6 +285,7 @@ where
 	fn as_uvec(&self) -> Self::U32Vec;
 	fn as_i64vec(&self) -> Self::I64Vec;
 	fn as_u64vec(&self) -> Self::U64Vec;
+	fn as_isizevec(&self) -> Self::ISizeVec;
 	fn as_usizevec(&self) -> Self::USizeVec;
 	fn as_vec(&self) -> Self::F32Vec;
 	fn as_dvec(&self) -> Self::F64Vec;
@@ -297,6 +301,7 @@ macro_rules! as_types {
 		type U32Vec = UVec2;
 		type I64Vec = I64Vec2;
 		type U64Vec = U64Vec2;
+		type ISizeVec = ISizeVec2;
 		type USizeVec = USizeVec2;
 		type F32Vec = Vec2;
 		type F64Vec = DVec2;
@@ -310,6 +315,7 @@ macro_rules! as_types {
 		type U32Vec = UVec3;
 		type I64Vec = I64Vec3;
 		type U64Vec = U64Vec3;
+		type ISizeVec = ISizeVec3;
 		type USizeVec = USizeVec3;
 		type F32Vec = Vec3;
 		type F64Vec = DVec3;
@@ -323,6 +329,7 @@ macro_rules! as_types {
 		type U32Vec = UVec4;
 		type I64Vec = I64Vec4;
 		type U64Vec = U64Vec4;
+		type ISizeVec = ISizeVec4;
 		type USizeVec = USizeVec4;
 		type F32Vec = Vec4;
 		type F64Vec = DVec4;
@@ -394,6 +401,7 @@ macro_rules! impl_gvec {
 			impl_as!(as_uvec, Self::U32Vec, $dim);
 			impl_as!(as_i64vec, Self::I64Vec, $dim);
 			impl_as!(as_u64vec, Self::U64Vec, $dim);
+			impl_as!(as_isizevec, Self::ISizeVec, $dim);
 			impl_as!(as_usizevec, Self::USizeVec, $dim);
 			impl_as!(as_vec, Self::F32Vec, $dim);
 			impl_as!(as_dvec, Self::F64Vec, $dim);
@@ -427,6 +435,9 @@ impl_gvec!(I64Vec4, i64, BVec4, 4);
 impl_gvec!(U64Vec2, u64, BVec2, 2);
 impl_gvec!(U64Vec3, u64, BVec3, 3);
 impl_gvec!(U64Vec4, u64, BVec4, 4);
+impl_gvec!(ISizeVec2, isize, BVec2, 2);
+impl_gvec!(ISizeVec3, isize, BVec3, 3);
+impl_gvec!(ISizeVec4, isize, BVec4, 4);
 impl_gvec!(USizeVec2, usize, BVec2, 2);
 impl_gvec!(USizeVec3, usize, BVec3, 3);
 impl_gvec!(USizeVec4, usize, BVec4, 4);
@@ -500,6 +511,7 @@ impl_gvec2!(IVec2, IVec3);
 impl_gvec2!(UVec2, UVec3);
 impl_gvec2!(I64Vec2, I64Vec3);
 impl_gvec2!(U64Vec2, U64Vec3);
+impl_gvec2!(ISizeVec2, ISizeVec3);
 impl_gvec2!(USizeVec2, USizeVec3);
 impl_gvec2!(Vec2, Vec3);
 impl_gvec2!(DVec2, DVec3);
@@ -578,6 +590,7 @@ impl_gvec3!(IVec3, IVec4, IVec2);
 impl_gvec3!(UVec3, UVec4, UVec2);
 impl_gvec3!(I64Vec3, I64Vec4, I64Vec2);
 impl_gvec3!(U64Vec3, U64Vec4, U64Vec2);
+impl_gvec3!(ISizeVec3, ISizeVec4, ISizeVec2);
 impl_gvec3!(USizeVec3, USizeVec4, USizeVec2);
 impl_gvec3!(Vec3, Vec4, Vec2);
 impl_gvec3!(Vec3A, Vec4, Vec2);
@@ -657,6 +670,7 @@ impl_gvec4!(IVec4, IVec3);
 impl_gvec4!(UVec4, UVec3);
 impl_gvec4!(I64Vec4, I64Vec3);
 impl_gvec4!(U64Vec4, U64Vec3);
+impl_gvec4!(ISizeVec4, ISizeVec3);
 impl_gvec4!(USizeVec4, USizeVec3);
 impl_gvec4!(Vec4, Vec3);
 impl_gvec4!(DVec4, DVec3);
@@ -702,6 +716,9 @@ impl_signedvec!(IVec4);
 impl_signedvec!(I64Vec2);
 impl_signedvec!(I64Vec3);
 impl_signedvec!(I64Vec4);
+impl_signedvec!(ISizeVec2);
+impl_signedvec!(ISizeVec3);
+impl_signedvec!(ISizeVec4);
 impl_signedvec!(Vec2);
 impl_signedvec!(Vec3);
 impl_signedvec!(Vec3A);
@@ -739,6 +756,7 @@ impl_signedvec2!(I8Vec2);
 impl_signedvec2!(I16Vec2);
 impl_signedvec2!(IVec2);
 impl_signedvec2!(I64Vec2);
+impl_signedvec2!(ISizeVec2);
 impl_signedvec2!(Vec2);
 impl_signedvec2!(DVec2);
 
@@ -767,6 +785,7 @@ impl_signedvec3!(I8Vec3);
 impl_signedvec3!(I16Vec3);
 impl_signedvec3!(IVec3);
 impl_signedvec3!(I64Vec3);
+impl_signedvec3!(ISizeVec3);
 impl_signedvec3!(Vec3);
 impl_signedvec3!(Vec3A);
 impl_signedvec3!(DVec3);
@@ -798,6 +817,7 @@ impl_signedvec4!(I8Vec4);
 impl_signedvec4!(I16Vec4);
 impl_signedvec4!(IVec4);
 impl_signedvec4!(I64Vec4);
+impl_signedvec4!(ISizeVec4);
 impl_signedvec4!(Vec4);
 impl_signedvec4!(DVec4);
 
@@ -836,7 +856,7 @@ pub trait FloatVec: SignedVec {
 	fn powf(self, n: Self::Scalar) -> Self;
 	fn recip(self) -> Self;
 	fn lerp(self, rhs: Self, s: Self::Scalar) -> Self;
-	fn move_towards(&self, rhs: Self, d: Self::Scalar) -> Self;
+	fn move_towards(self, rhs: Self, d: Self::Scalar) -> Self;
 	fn midpoint(self, rhs: Self) -> Self;
 	fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool;
 	fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self;
@@ -881,7 +901,7 @@ macro_rules! impl_floatvec {
 			fn powf(self, n: Self::Scalar) -> Self { self.powf(n) }
 			fn recip(self) -> Self { self.recip() }
 			fn lerp(self, rhs: Self, s: Self::Scalar) -> Self { self.lerp(rhs, s) }
-			fn move_towards(&self, rhs: Self, d: Self::Scalar) -> Self { self.move_towards(rhs, d) }
+			fn move_towards(self, rhs: Self, d: Self::Scalar) -> Self { self.move_towards(rhs, d) }
 			fn midpoint(self, rhs: Self) -> Self { self.midpoint(rhs) }
 			fn abs_diff_eq(self, rhs: Self, max_abs_diff: Self::Scalar) -> bool { self.abs_diff_eq(rhs, max_abs_diff) }
 			fn clamp_length(self, min: Self::Scalar, max: Self::Scalar) -> Self { self.clamp_length(min, max) }
@@ -909,7 +929,7 @@ pub trait FloatVec2: FloatVec + SignedVec2 {
 	fn angle_to(self, rhs: Self) -> Self::Scalar;
 	fn from_angle(angle: Self::Scalar) -> Self;
 	fn to_angle(self) -> Self::Scalar;
-	fn rotate_towards(&self, rhs: Self, max_angle: Self::Scalar) -> Self;
+	fn rotate_towards(self, rhs: Self, max_angle: Self::Scalar) -> Self;
 }
 
 macro_rules! impl_floatvec2 {
@@ -918,7 +938,7 @@ macro_rules! impl_floatvec2 {
 			fn angle_to(self, rhs: Self) -> Self::Scalar { self.angle_to(rhs) }
 			fn from_angle(angle: Self::Scalar) -> Self { Self::from_angle(angle) }
 			fn to_angle(self) -> Self::Scalar { self.to_angle() }
-			fn rotate_towards(&self, rhs: Self, max_angle: Self::Scalar) -> Self { self.rotate_towards(rhs, max_angle) }
+			fn rotate_towards(self, rhs: Self, max_angle: Self::Scalar) -> Self { self.rotate_towards(rhs, max_angle) }
 		}
 	};
 }
@@ -931,9 +951,9 @@ Vector of length 3 whose elements are a floating-point type.
 */
 pub trait FloatVec3: FloatVec + SignedVec3 {
 	fn angle_between(self, rhs: Self) -> Self::Scalar;
-	fn any_orthogonal_vector(&self) -> Self;
-	fn any_orthonormal_vector(&self) -> Self;
-	fn any_orthonormal_pair(&self) -> (Self, Self);
+	fn any_orthogonal_vector(self) -> Self;
+	fn any_orthonormal_vector(self) -> Self;
+	fn any_orthonormal_pair(self) -> (Self, Self);
 	fn rotate_towards(self, rhs: Self, max_angle: Self::Scalar) -> Self;
 	fn slerp(self, rhs: Self, s: Self::Scalar) -> Self;
 }
@@ -942,9 +962,9 @@ macro_rules! impl_floatvec3 {
 	($type:ty) => {
 		impl FloatVec3 for $type {
 			fn angle_between(self, rhs: Self) -> Self::Scalar { self.angle_between(rhs) }
-			fn any_orthogonal_vector(&self) -> Self { self.any_orthogonal_vector() }
-			fn any_orthonormal_vector(&self) -> Self { self.any_orthonormal_vector() }
-			fn any_orthonormal_pair(&self) -> (Self, Self) { self.any_orthonormal_pair() }
+			fn any_orthogonal_vector(self) -> Self { self.any_orthogonal_vector() }
+			fn any_orthonormal_vector(self) -> Self { self.any_orthonormal_vector() }
+			fn any_orthonormal_pair(self) -> (Self, Self) { self.any_orthonormal_pair() }
 			fn rotate_towards(self, rhs: Self, max_angle: Self::Scalar) -> Self { self.rotate_towards(rhs, max_angle) }
 			fn slerp(self, rhs: Self, s: Self::Scalar) -> Self { self.slerp(rhs, s) }
 		}
@@ -1063,6 +1083,9 @@ impl_intvec!(I64Vec4, u64);
 impl_intvec!(U64Vec2, u64);
 impl_intvec!(U64Vec3, u64);
 impl_intvec!(U64Vec4, u64);
+impl_intvec!(ISizeVec2, usize);
+impl_intvec!(ISizeVec3, usize);
+impl_intvec!(ISizeVec4, usize);
 impl_intvec!(USizeVec2, usize);
 impl_intvec!(USizeVec3, usize);
 impl_intvec!(USizeVec4, usize);
@@ -1090,6 +1113,7 @@ impl IntVec2 for IVec2 {}
 impl IntVec2 for UVec2 {}
 impl IntVec2 for I64Vec2 {}
 impl IntVec2 for U64Vec2 {}
+impl IntVec2 for ISizeVec2 {}
 impl IntVec2 for USizeVec2 {}
 
 /**
@@ -1115,6 +1139,7 @@ impl IntVec3 for IVec3 {}
 impl IntVec3 for UVec3 {}
 impl IntVec3 for I64Vec3 {}
 impl IntVec3 for U64Vec3 {}
+impl IntVec3 for ISizeVec3 {}
 impl IntVec3 for USizeVec3 {}
 
 /**
@@ -1140,6 +1165,7 @@ impl IntVec4 for IVec4 {}
 impl IntVec4 for UVec4 {}
 impl IntVec4 for I64Vec4 {}
 impl IntVec4 for U64Vec4 {}
+impl IntVec4 for ISizeVec4 {}
 impl IntVec4 for USizeVec4 {}
 
 /**
@@ -1159,6 +1185,9 @@ impl SIntVec for IVec4 {}
 impl SIntVec for I64Vec2 {}
 impl SIntVec for I64Vec3 {}
 impl SIntVec for I64Vec4 {}
+impl SIntVec for ISizeVec2 {}
+impl SIntVec for ISizeVec3 {}
+impl SIntVec for ISizeVec4 {}
 
 /**
 Vector of length 2 whose elements are a signed integer type.
@@ -1169,6 +1198,7 @@ impl SIntVec2 for I8Vec2 {}
 impl SIntVec2 for I16Vec2 {}
 impl SIntVec2 for IVec2 {}
 impl SIntVec2 for I64Vec2 {}
+impl SIntVec2 for ISizeVec2 {}
 
 /**
 Vector of length 3 whose elements are a signed integer type.
@@ -1179,6 +1209,7 @@ impl SIntVec3 for I8Vec3 {}
 impl SIntVec3 for I16Vec3 {}
 impl SIntVec3 for IVec3 {}
 impl SIntVec3 for I64Vec3 {}
+impl SIntVec3 for ISizeVec3 {}
 
 /**
 Vector of length 4 whose elements are a signed integer type.
@@ -1189,6 +1220,7 @@ impl SIntVec4 for I8Vec4 {}
 impl SIntVec4 for I16Vec4 {}
 impl SIntVec4 for IVec4 {}
 impl SIntVec4 for I64Vec4 {}
+impl SIntVec4 for ISizeVec4 {}
 
 /**
 Vector of any length whose elements are an unsigned integer type.
@@ -1315,6 +1347,15 @@ pub trait U64Vec: UIntVec<Scalar = u64> {}
 impl U64Vec for U64Vec2 {}
 impl U64Vec for U64Vec3 {}
 impl U64Vec for U64Vec4 {}
+
+/**
+Vector of any length whose elements are [`isize`].
+*/
+pub trait ISizeVec: SIntVec<Scalar = isize> {}
+
+impl ISizeVec for ISizeVec2 {}
+impl ISizeVec for ISizeVec3 {}
+impl ISizeVec for ISizeVec4 {}
 
 /**
 Vector of any length whose elements are [`usize`].
