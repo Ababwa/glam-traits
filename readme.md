@@ -73,7 +73,7 @@ For lengths "any", 2, 3 and 4:
 
 As well as for concrete types of any length:
 
-`I8Vec`, `U8Vec`, `I16Vec`, `U16Vec`, `I32Vec`, `U32Vec`, `I64Vec`, `U64Vec`, `USizeVec`, `F32Vec`, `F64Vec`
+`I8Vec`, `U8Vec`, `I16Vec`, `U16Vec`, `I32Vec`, `U32Vec`, `I64Vec`, `U64Vec`, `ISizeVec`, `USizeVec`, `F32Vec`, `F64Vec`
 
 `BVec` is also provided to cover boolean vectors.
 
