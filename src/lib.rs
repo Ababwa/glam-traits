@@ -408,8 +408,6 @@ macro_rules! impl_gvec {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_gvec;
 
 impl_gvec!(I8Vec2, i8, BVec2, 2);
 impl_gvec!(I8Vec3, i8, BVec3, 3);
@@ -500,8 +498,6 @@ macro_rules! impl_gvec2 {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_gvec2;
 
 impl_gvec2!(I8Vec2, I8Vec3);
 impl_gvec2!(U8Vec2, U8Vec3);
@@ -579,8 +575,6 @@ macro_rules! impl_gvec3 {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_gvec3;
 
 impl_gvec3!(I8Vec3, I8Vec4, I8Vec2);
 impl_gvec3!(U8Vec3, U8Vec4, U8Vec2);
@@ -659,8 +653,6 @@ macro_rules! impl_gvec4 {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_gvec4;
 
 impl_gvec4!(I8Vec4, I8Vec3);
 impl_gvec4!(U8Vec4, U8Vec3);
@@ -701,8 +693,6 @@ macro_rules! impl_signedvec {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_signedvec;
 
 impl_signedvec!(I16Vec2);
 impl_signedvec!(I16Vec3);
@@ -749,8 +739,6 @@ macro_rules! impl_signedvec2 {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_signedvec2;
 
 impl_signedvec2!(I8Vec2);
 impl_signedvec2!(I16Vec2);
@@ -778,8 +766,6 @@ macro_rules! impl_signedvec3 {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_signedvec3;
 
 impl_signedvec3!(I8Vec3);
 impl_signedvec3!(I16Vec3);
@@ -810,8 +796,6 @@ macro_rules! impl_signedvec4 {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_signedvec4;
 
 impl_signedvec4!(I8Vec4);
 impl_signedvec4!(I16Vec4);
@@ -1056,8 +1040,6 @@ macro_rules! impl_intvec {
 		}
 	};
 }
-#[allow(unused_imports)]
-pub(crate) use impl_intvec;
 
 impl_intvec!(I8Vec2, u8);
 impl_intvec!(I8Vec3, u8);
