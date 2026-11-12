@@ -11,3 +11,8 @@ repository = "https://github.com/Ababwa/glam-traits"
 version = "0.34.3"
 default-features = false
 features = ["all-types"]
+
+[features]
+std = ["glam/std"]
+libm = ["glam/libm"]
+default = ["std"]
